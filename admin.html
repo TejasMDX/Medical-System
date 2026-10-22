@@ -14,5 +14,68 @@
 
     <a href="login.html"><button>Login</button></a>
 
+    <h1>Admin Dashboard</h1>
+
+    <p>Welcome to your admin account.</p>
+
+    <h2>Add Patient</h2>
+
+    <p>Add a new patient's information below.</p>
+
+    <form>
+        <label for="patientid">Patient ID:</label>
+        <input type="text" id="patientid" name="patientid">
+
+        <br><br>
+
+        <label for="fullname">Full Name:</label>
+        <input type="text" id="fullname" name="fullname" required>
+
+        <br><br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+
+        <br><br>
+
+        <label for="telephone">Telephone:</label>
+        <input type="tel" id="telephone" name="telephone" required>
+
+        <br><br>
+
+        <label for="dob">Date of Birth:</label>
+        <input type="date" id="dob" name="dob" required>
+
+        <br><br>
+
+        <label for="nhsnumber">NHS Number:</label>
+        <input type="text" id="nhsnumber" name="nhsnumber" required>
+
+        <br><br>
+
+        <button type="button">Add Patient</button>
+        <button type="button">Update Patient</button>
+    </form>
+
+    <h2>Patient Records</h2>
+
+    <p>View and manage registered patient information below.</p>
+
+    <table>
+        <tr>
+            <th>Patient ID</th>
+            <th>Full Name</th>
+            <th>Address</th>
+            <th>Date of Birth</th>
+            <th>Telephone</th>
+            <th>NHS Number</th>
+            <th>Actions</th>
+        </tr>
+
+        <tr>
+            <td colspan="7">Patient records will be displayed here later.</td>
+        </tr>
+    </table>
+
 </body>
 </html>
