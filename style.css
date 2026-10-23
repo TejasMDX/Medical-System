@@ -290,3 +290,306 @@ body.login-page {
         padding: 20px;
     }
 }
+
+
+/* Doctor portal design */
+.doctor-page {
+    background-color: #f1f7f5;
+    color: #34443e;
+}
+
+/* Dashboard heading */
+.doctor-page h1 {
+    font-size: 32px;
+    margin: 35px 0 20px;
+    color: #146c43;
+}
+
+.doctor-page h2 {
+    font-size: 22px;
+    margin-top: 35px;
+    margin-bottom: 12px;
+    color: #146c43;
+}
+
+/* Doctor image */
+.doctor-page img {
+    width: 260px;
+    border-radius: 14px;
+    margin-top: 10px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Sections and text */
+.doctor-page p {
+    line-height: 1.7;
+}
+
+/* Dropdowns and medical note box */
+.doctor-page select,
+.doctor-page textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 600px;
+    padding: 12px 14px;
+    border: 1px solid #d4e1db;
+    border-radius: 9px;
+    background-color: white;
+    color: #34443e;
+    font: inherit;
+    margin-top: 8px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.doctor-page select:focus,
+.doctor-page textarea:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.12);
+}
+
+.doctor-page textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Buttons */
+.doctor-page button {
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-weight: bold;
+    background-color: #198754;
+    box-shadow: 0 3px 8px rgba(25, 135, 84, 0.15);
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.doctor-page button:hover {
+    background-color: #146c43;
+    transform: translateY(-1px);
+}
+
+/* Keep the page comfortable on smaller screens */
+@media (max-width: 600px) {
+    body.doctor-page {
+        padding: 12px;
+    }
+
+    .doctor-page h1 {
+        font-size: 26px;
+    }
+
+    .doctor-page h2 {
+        font-size: 20px;
+    }
+
+    .doctor-page nav {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .doctor-page nav a {
+        margin-right: 8px;
+    }
+}
+
+
+/* Patient page */
+.patient-page {
+    background-color: #f1f7f5;
+    color: #34443e;
+}
+
+/* Headings */
+.patient-page h1 {
+    font-size: 32px;
+    margin: 35px 0 20px;
+    color: #146c43;
+}
+
+.patient-page h2 {
+    font-size: 22px;
+    margin-top: 35px;
+    margin-bottom: 12px;
+    color: #146c43;
+}
+
+/* Image */
+.patient-page img {
+    width: 260px;
+    border-radius: 14px;
+    margin-top: 10px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+}
+
+/* Forms */
+.patient-page select,
+.patient-page input,
+.patient-page textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 600px;
+    padding: 12px 14px;
+    border: 1px solid #d4e1db;
+    border-radius: 9px;
+    background-color: white;
+    color: #34443e;
+    font: inherit;
+    margin-top: 8px;
+}
+
+.patient-page select:focus,
+.patient-page input:focus,
+.patient-page textarea:focus {
+    border-color: #198754;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.12);
+}
+
+/* Buttons */
+.patient-page button {
+    padding: 12px 22px;
+    border-radius: 9px;
+    font-weight: bold;
+    background-color: #198754;
+    box-shadow: 0 3px 8px rgba(25, 135, 84, 0.15);
+    transition: 0.2s;
+}
+
+.patient-page button:hover {
+    background-color: #146c43;
+    transform: translateY(-1px);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    body.patient-page {
+        padding: 12px;
+    }
+
+    .patient-page h1 {
+        font-size: 26px;
+    }
+
+    .patient-page h2 {
+        font-size: 20px;
+    }
+
+    .patient-page nav {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .patient-page nav a {
+        margin-right: 8px;
+    }
+}
+
+/* Login page */
+body.login-page {
+    min-height: 100vh;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 30px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(rgba(232, 245, 238, 0.35), rgba(244, 249, 247, 0.35)),
+                url("images/image6.jpg") center/cover no-repeat;
+    color: #34443e;
+}
+
+/* Login box */
+.login-page .login-container {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 420px;
+    padding: 40px;
+    background-color: white;
+    border: 1px solid #e0ebe4;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(30, 80, 55, 0.10);
+}
+
+/* Heading */
+.login-page h1 {
+    margin-top: 0;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 32px;
+    color: #146c43;
+}
+
+/* Labels and inputs */
+.login-page label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.login-page input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d4e1db;
+    border-radius: 9px;
+    background-color: #fbfdfc;
+    font: inherit;
+    outline: none;
+    transition: 0.2s;
+}
+
+.login-page input:focus {
+    border-color: #198754;
+    background-color: white;
+    box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.12);
+}
+
+/* Login button */
+.login-page button {
+    width: 100%;
+    padding: 13px;
+    border: none;
+    border-radius: 9px;
+    background-color: #198754;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.login-page button:hover {
+    background-color: #146c43;
+    transform: translateY(-1px);
+}
+
+/* Register link */
+.login-page .login-container p {
+    margin-top: 25px;
+    margin-bottom: 0;
+    text-align: center;
+    font-size: 14px;
+    color: #65736b;
+}
+
+.login-page .login-container a {
+    color: #198754;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-page .login-container a:hover {
+    text-decoration: underline;
+}
+
+/* Smaller screens */
+@media (max-width: 480px) {
+    body.login-page {
+        padding: 15px;
+    }
+
+    .login-page .login-container {
+        padding: 28px 22px;
+    }
+}
