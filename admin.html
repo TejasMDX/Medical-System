@@ -23,6 +23,48 @@
 
     <p>Add a new patient's information below.</p>
 
+    <form id="patientForm">
+
+    <label for="nhsInput">NHS:</label>
+    <input id="nhsInput" type="text" required>
+    <br>
+
+    <label for="titleInput">Title:</label>
+    <input id="titleInput" type="text" required>
+    <br>
+
+    <label for="firstInput">First Name:</label>
+    <input id="firstInput" type="text" required>
+    <br>
+
+    <label for="lastInput">Last Name:</label>
+    <input id="lastInput" type="text" required>
+    <br>
+
+    <label for="dobInput">DOB:</label>
+    <input id="dobInput" type="text" placeholder="DD/MM/YYYY" required>
+    <br>
+
+    <label for="genderInput">Gender:</label>
+    <input id="genderInput" type="text" required>
+    <br>
+
+    <label for="addressInput">Address:</label>
+    <input id="addressInput" type="text" required>
+    <br>
+
+    <label for="emailInput">Email:</label>
+    <input id="emailInput" type="email" required>
+    <br>
+
+    <label for="telephoneInput">Telephone:</label>
+    <input id="telephoneInput" type="text" required>
+    <br>
+
+    <button type="submit">Add patient</button>
+
+    </form>
+
     <h2>Patient Records</h2>
 
     <p>View and manage registered patient information below.</p>
@@ -76,6 +118,36 @@
 
             document.getElementById("output").innerHTML = html;
         }
+
+        function addPatient() {
+        document.getElementById("patientForm").addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const patient = {
+                id: Math.max(0, ...db.map(p => Number(p.id) || 0)) + 1,
+                NHS: document.getElementById("nhsInput").value.trim(),
+                Title: document.getElementById("titleInput").value.trim(),
+                First: document.getElementById("firstInput").value.trim(),
+                Last: document.getElementById("lastInput").value.trim(),
+                DOB: document.getElementById("dobInput").value.trim(),
+                Gender: document.getElementById("genderInput").value.trim(),
+                Address: document.getElementById("addressInput").value.trim(),
+                Email: document.getElementById("emailInput").value.trim(),
+                Telephone: document.getElementById("telephoneInput").value.trim()
+            };
+
+            db.push(patient);
+
+            localStorage.setItem("patients", JSON.stringify(db));
+
+            document.getElementById("patientForm").reset();
+
+
+        });
+        }
+        addPatient();
+        showAllPatients();
 </script>
 
 </body>
