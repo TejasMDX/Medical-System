@@ -6,6 +6,7 @@
 </head>
 
 <body>
+    
     <nav>
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -22,60 +23,132 @@
 
     <p>Add a new patient's information below.</p>
 
-    <form>
-        <label for="patientid">Patient ID:</label>
-        <input type="text" id="patientid" name="patientid">
+    <form id="patientForm">
 
-        <br><br>
+    <label for="nhsInput">NHS:</label>
+    <input id="nhsInput" type="text" required>
+    <br>
 
-        <label for="fullname">Full Name:</label>
-        <input type="text" id="fullname" name="fullname" required>
+    <label for="titleInput">Title:</label>
+    <input id="titleInput" type="text" required>
+    <br>
 
-        <br><br>
+    <label for="firstInput">First Name:</label>
+    <input id="firstInput" type="text" required>
+    <br>
 
-        <label for="address">Address:</label>
-        <input type="text" id="address" name="address" required>
+    <label for="lastInput">Last Name:</label>
+    <input id="lastInput" type="text" required>
+    <br>
 
-        <br><br>
+    <label for="dobInput">DOB:</label>
+    <input id="dobInput" type="text" placeholder="DD/MM/YYYY" required>
+    <br>
 
-        <label for="telephone">Telephone:</label>
-        <input type="tel" id="telephone" name="telephone" required>
+    <label for="genderInput">Gender:</label>
+    <input id="genderInput" type="text" required>
+    <br>
 
-        <br><br>
+    <label for="addressInput">Address:</label>
+    <input id="addressInput" type="text" required>
+    <br>
 
-        <label for="dob">Date of Birth:</label>
-        <input type="date" id="dob" name="dob" required>
+    <label for="emailInput">Email:</label>
+    <input id="emailInput" type="email" required>
+    <br>
 
-        <br><br>
+    <label for="telephoneInput">Telephone:</label>
+    <input id="telephoneInput" type="text" required>
+    <br>
 
-        <label for="nhsnumber">NHS Number:</label>
-        <input type="text" id="nhsnumber" name="nhsnumber" required>
+    <button type="submit">Add patient</button>
 
-        <br><br>
-
-        <button type="button">Add Patient</button>
-        <button type="button">Update Patient</button>
     </form>
 
     <h2>Patient Records</h2>
 
     <p>View and manage registered patient information below.</p>
+    <button onclick="showAllPatients()">Show Patients</button>
+    <div id="output"></div>
 
-    <table>
-        <tr>
-            <th>Patient ID</th>
-            <th>Full Name</th>
-            <th>Address</th>
-            <th>Date of Birth</th>
-            <th>Telephone</th>
-            <th>NHS Number</th>
-            <th>Actions</th>
-        </tr>
+    <script>
+        let db = null;
 
-        <tr>
-            <td colspan="7">Patient records will be displayed here later.</td>
-        </tr>
-    </table>
+        async function setupDatabase() {
+                const response = await fetch("json/patients.json");
+
+                db = await response.json();
+        }
+
+        setupDatabase();
+
+        function showAllPatients() {
+            const patients = Array.isArray(db) ? db : [db];
+
+            let html = `<table border="1">
+                <tr>
+                    <th>ID</th>
+                    <th>NHS</th>
+                    <th>Title</th>
+                    <th>First</th>
+                    <th>Last</th>
+                    <th>DOB</th>
+                    <th>Gender</th>
+                    <th>Address</th>
+                    <th>Email</th>
+                    <th>Telephone</th>
+                </tr>`;
+
+            patients.forEach(p => {
+                html += `<tr>
+                    <td>${p.id}</td>
+                    <td>${p.NHS}</td>
+                    <td>${p.Title}</td>
+                    <td>${p.First}</td>
+                    <td>${p.Last}</td>
+                    <td>${p.DOB}</td>
+                    <td>${p.Gender}</td>
+                    <td>${p.Address}</td>
+                    <td>${p.Email}</td>
+                    <td>${p.Telephone}</td>
+                </tr>`;
+            });
+
+            html += `</table>`;
+
+            document.getElementById("output").innerHTML = html;
+        }
+
+        function addPatient() {
+        document.getElementById("patientForm").addEventListener("submit", function(event) {
+
+            event.preventDefault();
+
+            const patient = {
+                id: Math.max(0, ...db.map(p => Number(p.id) || 0)) + 1,
+                NHS: document.getElementById("nhsInput").value.trim(),
+                Title: document.getElementById("titleInput").value.trim(),
+                First: document.getElementById("firstInput").value.trim(),
+                Last: document.getElementById("lastInput").value.trim(),
+                DOB: document.getElementById("dobInput").value.trim(),
+                Gender: document.getElementById("genderInput").value.trim(),
+                Address: document.getElementById("addressInput").value.trim(),
+                Email: document.getElementById("emailInput").value.trim(),
+                Telephone: document.getElementById("telephoneInput").value.trim()
+            };
+
+            db.push(patient);
+
+            localStorage.setItem("patients", JSON.stringify(db));
+
+            document.getElementById("patientForm").reset();
+
+
+        });
+        }
+        addPatient();
+        showAllPatients();
+</script>
 
 </body>
 </html>
