@@ -69,12 +69,15 @@
     <h2>Patient Records</h2>
 
     <p>View and manage registered patient information below.</p>
+
+    <!-- This button displays the registered patients. -->
     <button onclick="showAllPatients()">Show Patients</button>
     <div id="output"></div>
 
     <h2>Delete Patient Records</h2>
     <p>Delete patient information below.</p>
 
+    <!-- This field is used to enter the ID of the patient to delete. -->
     <label for="deleteId">Patient ID:</label>
     <input id="deleteId" type="text" required>
 
@@ -121,6 +124,7 @@
 
     <p>View registered doctor information below.</p>
 
+    <!-- This button loads and displays the doctor records. -->
     <button onclick="setupDoctors().then(showAllDoctors)">Show Doctors</button>
     <div id="doctorOutput"></div>
 
@@ -128,6 +132,7 @@
 
     <p>Delete doctor information below.</p>
 
+    <!-- This field is used to enter the ID of the doctor to delete. -->
     <label for="deleteDoctorId">Doctor ID:</label>
     <input id="deleteDoctorId" type="text" required>
 
@@ -144,6 +149,7 @@
                 // This loads the patient information from the JSON file.
                 const response = await fetch("json/patients.json");
 
+                // This converts the response into JavaScript data.
                 db = await response.json();
         }
 
@@ -154,6 +160,7 @@
             // This makes sure the data can be displayed as a list.
             const patients = Array.isArray(db) ? db : [db];
 
+            // This creates the table headings for the patient records.
             let html = `<table border="1">
                 <tr>
                     <th>ID</th>
@@ -184,6 +191,7 @@
                 </tr>`;
             });
 
+            // This closes the patient table.
             html += `</table>`;
 
             // This displays the patient table on the page.
@@ -194,12 +202,15 @@
         // This runs when the patient form is submitted.
         document.getElementById("patientForm").addEventListener("submit", function(event) {
 
+            // This stops the page from refreshing when the form is submitted.
             event.preventDefault();
 
             // This collects the details entered into the form.
             const patient = {
                 // This gives the new patient the next available ID.
                 id: Math.max(0, ...db.map(p => Number(p.id) || 0)) + 1,
+
+                // These lines get the patient's details and remove extra spaces.
                 NHS: document.getElementById("nhsInput").value.trim(),
                 Title: document.getElementById("titleInput").value.trim(),
                 First: document.getElementById("firstInput").value.trim(),
@@ -214,7 +225,7 @@
             // This adds the new patient to the list.
             db.push(patient);
 
-            // This saves the patient list in local storage.
+            // This converts the patient list into a string and saves it in local storage.
             localStorage.setItem("patients", JSON.stringify(db));
 
             // This clears the form after adding the patient.
@@ -223,6 +234,7 @@
 
         });
         }
+
         // This sets up the form so patients can be added.
         addPatient();
 
@@ -230,6 +242,7 @@
             // This gets the ID entered for the patient to delete.
             const id = document.getElementById("deleteId").value;
 
+            // This searches the list for a patient with the entered ID.
             const index = db.findIndex(p => p.id == id);
 
                 // This removes the patient from the list.
@@ -250,6 +263,7 @@
                 // This loads the doctor information from the JSON file.
                 const response = await fetch("json/doctors.json");
 
+                // This converts the response into JavaScript data.
                 doctors = await response.json();
         }
 
@@ -260,6 +274,7 @@
             // This makes sure the doctor data can be displayed as a list.
             const doctorList = Array.isArray(doctors) ? doctors : [doctors];
 
+            // This creates the table headings for the doctor records.
             let html = `<table border="1">
                 <tr>
                     <th>ID</th>
@@ -284,6 +299,7 @@
                 </tr>`;
             });
 
+            // This closes the doctor table.
             html += `</table>`;
 
             // This displays the doctor table on the page.
@@ -295,12 +311,15 @@
         // This runs when the doctor form is submitted.
         document.getElementById("doctorForm").addEventListener("submit", function(event) {
 
+            // This stops the page from refreshing when the form is submitted.
             event.preventDefault();
 
             // This collects the details entered into the form.
             const doctor = {
                 // This gives the new doctor the next available ID.
                 id: Math.max(0, ...doctors.map(d => Number(d.id) || 0)) + 1,
+
+                // These lines get the doctor's details and remove extra spaces.
                 first_name: document.getElementById("doctorFirstInput").value.trim(),
                 last_name: document.getElementById("doctorLastInput").value.trim(),
                 email: document.getElementById("doctorEmailInput").value.trim(),
@@ -312,7 +331,7 @@
             // This adds the new doctor to the list.
             doctors.push(doctor);
 
-            // This saves the doctor list in local storage.
+            // This converts the doctor list into a string and saves it in local storage.
             localStorage.setItem("doctors", JSON.stringify(doctors));
 
             // This clears the form after adding the doctor.
@@ -323,6 +342,7 @@
 
         });
         }
+
         // This sets up the form so doctors can be added.
         addDoctor();
 
@@ -330,8 +350,10 @@
             // This gets the ID entered for the doctor to delete.
             const id = document.getElementById("deleteDoctorId").value;
 
+            // This searches the list for a doctor with the entered ID.
             const index = doctors.findIndex(d => d.id == id);
 
+            // This checks whether a doctor with the entered ID was found.
             if (index !== -1) {
                 // This removes the doctor from the list.
                 doctors.splice(index, 1);
