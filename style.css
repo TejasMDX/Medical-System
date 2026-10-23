@@ -11,6 +11,8 @@ nav {
     background-color: #198754;
     padding: 15px;
     border-radius: 8px;
+    display: flex;
+    align-items: center;
 }
 
 nav a {
@@ -22,6 +24,24 @@ nav a {
 
 nav a:hover {
     text-decoration: underline;
+}
+
+nav a[href="login.html"] {
+    margin-left: auto;
+    background-color: white;
+    color: #198754;
+    padding: 10px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid white;
+    transition: all 0.3s ease;
+}
+
+nav a[href="login.html"]:hover {
+    background-color: #146c43;
+    color: white;
+    transform: translateY(-2px);
 }
 
 h1 {
