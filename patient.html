@@ -56,6 +56,31 @@
 
     <p>Your medical history and doctor's notes will appear here.</p>
 
-    
+    <script>
+    // Fetch the doctors from the JSON file
+    fetch("json/doctors.json")
+        // Convert the JSON file into JavaScript data
+        .then(response => response.json())
+        // Get the list of doctors
+        .then(doctors => {
+            // Find the doctor list
+            const doctorSelect = document.getElementById("doctor");
+
+            doctors.forEach(doctor => {
+                // Create a new option for the list
+                const option = document.createElement("option");
+                // Use the doctor's ID as the option value
+                option.value = doctor.id;
+                // Display the doctor's full name
+                option.textContent =
+                    "Dr. " + doctor.first_name + " " + doctor.last_name;
+                // Add the doctor to the list
+                doctorSelect.appendChild(option);
+            });
+        });
+    </script>
+
+</body>
+
 </body>
 </html>

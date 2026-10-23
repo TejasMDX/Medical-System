@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title> Doctor Portal </title>
-<link rel="stylesheet" href="style.css">
+    <title>Doctor Portal</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -10,65 +10,85 @@
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
-
         <a href="login.html" class="login-button">Login</a>
     </nav>
-    
+
     <h1>Doctor Dashboard</h1>
 
-    <img src="images/image8.png" alt="Description of image">
+    <img src="images/image8.png" alt="Doctor">
 
     <p>Welcome to your doctor account.</p>
 
     <h2>My Appointments</h2>
-
     <p>View your upcoming appointments and patient details here.</p>
 
     <h2>Patient Records</h2>
 
-    <p>View patient information and medical history below.</p>
+    <label for="patient">Choose a Patient:</label>
 
-    <form>
-        <label for="patient">Choose a Patient:</label>
+    <select id="patient">
+        <option value="">Select a patient</option>
+    </select>
 
-        <select id="patient" name="patient" required>
-            <option value="">Select a patient</option>
-        </select>
+    <br><br>
 
-        <br><br>
-
-        <button type="button">View Patient Records</button>
-    </form>
+    <button type="button">View Patient Records</button>
 
     <h2>Medical Notes and Treatments</h2>
 
-    <p>Add medical notes, treatments and medication details for a patient.</p>
+    <p>Add medical notes and select a medicine for a patient.</p>
 
-    <form>
-        <label for="notes">Medical Notes:</label>
-        <br>
-        <textarea id="notes" name="notes" rows="4" required></textarea>
+    <label for="medicine">Medicine Name:</label>
 
-        <br><br>
+    <select id="medicine">
+        <option value="">Select a medicine</option>
+    </select>
 
-        <label for="treatment">Treatment:</label>
-        <input type="text" id="treatment" name="treatment" required>
+    <br><br>
 
-        <br><br>
+    <label for="notes">Medical Note:</label>
+    <br>
 
-        <label for="medicine">Medicine Name:</label>
-        <input type="text" id="medicine" name="medicine">
+    <textarea id="notes" rows="4"></textarea>
 
-        <br><br>
+    <br><br>
 
-        <label for="instructions">Medication Instructions:</label>
-        <br>
-        <textarea id="instructions" name="instructions" rows="3"></textarea>
+    <button type="button">Save Note</button>
 
-        <br><br>
+    <script>
+        // Fetch the patients and medicines
+        async function loadData() {
+            const patientResponse = await fetch("json/patients.json");
+            const patients = await patientResponse.json();
 
-        <button type="button">Save Medical Notes</button>
-    </form>
-    
+            const medicineResponse = await fetch("json/medicines.json");
+            const medicines = await medicineResponse.json();
+
+            // Add patients to the dropdown
+            patients.forEach(function(patient) {
+                const option = document.createElement("option");
+
+                option.value = patient.id;
+                option.textContent = patient.First + " " + patient.Last;
+
+                document.getElementById("patient").appendChild(option);
+            });
+
+            // Add medicines to the dropdown
+            medicines.forEach(function(medicine) {
+                const option = document.createElement("option");
+
+                option.value = medicine.id;
+                option.textContent = medicine.Drug;
+
+                document.getElementById("medicine").appendChild(option);
+            });
+        }
+
+        loadData().catch(function(error) {
+            console.log("Could not load the JSON files.", error);
+        });
+    </script>
+
 </body>
 </html>
