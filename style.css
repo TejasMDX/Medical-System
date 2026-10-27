@@ -393,48 +393,87 @@ body.login-page {
 }
 
 
-/* Patient page */
+
+/* Patient page background and layout */
 .patient-page {
-    background-color: #f1f7f5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    background: linear-gradient(rgba(244, 249, 247, 0.45), rgba(244, 249, 247, 0.45)),
+                url("images/image7.png") center/cover no-repeat;
+    background-attachment: fixed;
     color: #34443e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
 }
 
-/* Headings */
+/* Navigation bar */
+.patient-page nav {
+    width: 100%;
+    max-width: 1100px;
+    box-sizing: border-box;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Dashboard heading */
 .patient-page h1 {
     font-size: 32px;
-    margin: 35px 0 20px;
+    margin: 25px 0 15px;
     color: #146c43;
 }
 
-.patient-page h2 {
-    font-size: 22px;
-    margin-top: 35px;
-    margin-bottom: 12px;
-    color: #146c43;
-}
-
-/* Image */
+/* Dashboard image */
 .patient-page img {
     width: 260px;
+    max-width: 100%;
     border-radius: 14px;
-    margin-top: 10px;
-    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    margin: 10px 0;
 }
 
-/* Forms */
+/* Dashboard sections */
+.patient-page h2 {
+    font-size: 22px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: #146c43;
+}
+
+.patient-page p {
+    line-height: 1.7;
+}
+
+/* Appointment form */
+.patient-page form {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: rgba(255, 255, 255, 0.88);
+    border-radius: 12px;
+}
+
+/* Form fields */
 .patient-page select,
 .patient-page input,
 .patient-page textarea {
     box-sizing: border-box;
     width: 100%;
-    max-width: 600px;
+    max-width: 450px;
     padding: 12px 14px;
     border: 1px solid #d4e1db;
     border-radius: 9px;
     background-color: white;
     color: #34443e;
     font: inherit;
-    margin-top: 8px;
 }
 
 .patient-page select:focus,
@@ -445,13 +484,15 @@ body.login-page {
     box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.12);
 }
 
-/* Buttons */
+/* Book appointment button */
 .patient-page button {
     padding: 12px 22px;
     border-radius: 9px;
     font-weight: bold;
     background-color: #198754;
-    box-shadow: 0 3px 8px rgba(25, 135, 84, 0.15);
+    color: white;
+    border: none;
+    cursor: pointer;
     transition: 0.2s;
 }
 
@@ -460,10 +501,11 @@ body.login-page {
     transform: translateY(-1px);
 }
 
-/* Mobile */
+/* Mobile layout */
 @media (max-width: 600px) {
-    body.patient-page {
-        padding: 12px;
+    .patient-page {
+        padding: 15px 12px;
+        background-attachment: scroll;
     }
 
     .patient-page h1 {
@@ -475,14 +517,14 @@ body.login-page {
     }
 
     .patient-page nav {
-        flex-wrap: wrap;
         gap: 10px;
     }
 
     .patient-page nav a {
-        margin-right: 8px;
+        margin-right: 5px;
     }
 }
+
 
 /* Login page */
 body.login-page {
@@ -592,4 +634,55 @@ body.login-page {
     .login-page .login-container {
         padding: 28px 22px;
     }
+}
+
+
+/* Centre the admin dashboard content without affecting the navigation bar */
+body:has(#patientForm) {
+    text-align: center;
+}
+
+/* Keep the navigation bar the same as on other pages */
+body:has(#patientForm) nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Keep the Login button on the right */
+body:has(#patientForm) nav a[href="login.html"] {
+    margin-left: auto;
+}
+
+
+/* Centre headings and descriptions */
+body:has(#patientForm) h1,
+body:has(#patientForm) h2,
+body:has(#patientForm) p {
+    text-align: center;
+}
+
+/* Keep labels beside their input fields */
+body:has(#patientForm) form label {
+    display: inline-block;
+}
+
+/* Keep each input on the same line as its label */
+body:has(#patientForm) form input {
+    display: inline-block;
+}
+
+/* Centre the records tables */
+body:has(#patientForm) table {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+}
+
+/* Centre the buttons */
+body:has(#patientForm) button {
+    display: block;
+    margin: 10px auto;
 }
