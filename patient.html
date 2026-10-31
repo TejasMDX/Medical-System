@@ -6,6 +6,7 @@
 </head>
 
 <body class="patient-page">
+
     <nav>
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -13,8 +14,13 @@
 
         <a href="login.html" class="login-button">Login</a>
     </nav>
-    
-    <h1>Patient Dashboard</h1>
+
+    <div>
+        <p id="access_patient">Log in as a patient to access this portal.</p>
+    </div>
+
+    <div id="patient_dashboard">
+            <h1>Patient Dashboard</h1>
 
 
     <p>Welcome to your patient account.</p>
@@ -55,6 +61,8 @@
 
     <p>Your medical history and doctor's notes will appear here.</p>
 
+    </div>
+
     <script>
     // Fetch the doctors from the JSON file
     fetch("json/doctors.json")
@@ -78,8 +86,6 @@
             });
         });
     </script>
-
-</body>
 
 </body>
 </html>
