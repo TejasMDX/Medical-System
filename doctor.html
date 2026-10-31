@@ -26,6 +26,8 @@
 
     <h2>My Appointments</h2>
     <p>View your upcoming appointments and patient details here.</p>
+    <div id="appointments"></div>
+    
 
     <h2>Patient Records</h2>
 
@@ -69,10 +71,12 @@
         doctorDBRequest.onsuccess = function(event) {
 
             // Access the database.
-            const doctorDB = event.target.result;
+            const db = event.target.result;
+
+            showAppointments(db);
 
             // Start a transaction to read patient records.
-            const transaction = doctorDB.transaction(["Patients"], "readonly");
+            const transaction = db.transaction(["Patients"], "readonly");
 
             // Access the Patients object store.
             const patientsStore = transaction.objectStore("Patients");
@@ -101,12 +105,11 @@
 
             };
 
-            transaction.oncomplete = function() {
-                doctorDB.close();
-            };
-
 
         };
+        
+
+        
 
             // Add medicines to the dropdown
             medicines.forEach(function(medicine) {
@@ -122,6 +125,56 @@
         loadData().catch(function(error) {
             console.log("Could not load the JSON files.", error);
         });
+
+
+        function showAppointments(db) {
+
+            const doctorID = 1;
+
+
+            // Start a transaction to read patient records.
+            const transaction = db.transaction(["Appointment"], "readonly");
+
+            // Access the Appointment object store.
+            const appointmentStore = transaction.objectStore("Appointment");
+
+            // Get all the patient records.
+            const request = appointmentStore.getAll();
+
+            request.onsuccess = function() {
+
+                const appointments = request.result;
+
+                // This creates the table headings for the patient records.
+                let html = `<table border="1">
+                    <tr>
+                        <th>Appointment ID</th>
+                        <th>Patient ID</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>`;
+
+                appointments.forEach(a => {
+                    if (Number(a.doctor_id) === Number(doctorID)) {
+                        html += `<tr>
+                            <td>${a.appointment_id}</td>
+                            <td>${a.patient_id}</td>
+                            <td>${a.date}</td>
+                            <td>${a.time}</td>
+                        </tr>`;
+                    }
+                });
+
+                // This closes the patient table.
+                html += `</table>`;
+
+                // This displays the patient table on the page.
+                document.getElementById("appointments").innerHTML = html;
+            };
+        };
+
+        
+
     </script>
 
 </body>
