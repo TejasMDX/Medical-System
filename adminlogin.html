@@ -1,44 +1,48 @@
+
 <!DOCTYPE html>
 <html>
 <head>
     <!-- Set the title displayed on the browser tab -->
-    <title> Login Page </title>
+    <title>Login Page</title>
 
     <!-- Link the external CSS file to style the page -->
     <link rel="stylesheet" href="style.css">
 </head>
 
-<!-- Apply the login-page CSS class for styling -->
 <body class="login-page">
 
     <!-- Container for the login form -->
     <div class="login-container">
 
-        <!-- Main heading of the page -->
         <h1>Login</h1>
 
-        <!-- Form containing the user's login details -->
-        <form>
+        <!-- Form containing the admin's login details -->
+        <form id="adminLoginForm">
 
-            <!-- Label and input field for the user's username -->
-            <label for="username">username</label>
-            <input type="username" id="username" name="username" required>
+            <!-- Username field -->
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
 
-            <!-- Add spacing between the username and password fields -->
             <br><br>
 
-            <!-- Label and input field for the user's password -->
+            <!-- Password field -->
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
 
-            <!-- Add spacing before the Login button -->
             <br><br>
 
-            <!-- Login button that links back to the home page -->
-            <a href="index.html"><button type="button">Login</button></a>
+            <!-- Login button -->
+            <button type="submit">Login</button>
+
+            <!-- Message displayed when login fails or succeeds -->
+            <p id="loginMessage"></p>
+
         </form>
 
     </div>
+
+    <!-- Load the database JavaScript file -->
+    <script src="import.js"></script>
 
 </body>
 </html>
