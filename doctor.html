@@ -133,35 +133,55 @@
 
 
             // Start a transaction to read patient records.
-            const transaction = db.transaction(["Appointment"], "readonly");
+            const transaction = db.transaction(["Appointment", "Patients"], "readonly");
 
             // Access the Appointment object store.
             const appointmentStore = transaction.objectStore("Appointment");
+            const patientsStore = transaction.objectStore("Patients");
 
             // Get all the patient records.
-            const request = appointmentStore.getAll();
+            const appointmentRequest = appointmentStore.getAll();
+            const patientsRequest = patientsStore.getAll();
 
-            request.onsuccess = function() {
+            transaction.oncomplete = function() {
 
-                const appointments = request.result;
+                const appointments = appointmentRequest.result;
+                const patients = patientsRequest.result;
 
                 // This creates the table headings for the patient records.
                 let html = `<table border="1">
-                    <tr>
-                        <th>Appointment ID</th>
-                        <th>Patient ID</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                    </tr>`;
+            <tr>
+                <th>NHS</th>
+                <th>Title</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>DOB</th>
+                <th>Gender</th>
+                <th>Address</th>
+                <th>Email</th>
+                <th>Telephone</th>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>`;
 
                 appointments.forEach(a => {
                     if (Number(a.doctor_id) === Number(doctorID)) {
+                        const patient = patients.find(p =>
+                    Number(p.id) === Number(a.patient_id)
+                );
                         html += `<tr>
-                            <td>${a.appointment_id}</td>
-                            <td>${a.patient_id}</td>
-                            <td>${a.date}</td>
-                            <td>${a.time}</td>
-                        </tr>`;
+                        <td>${patient.NHS}</td>
+                        <td>${patient.Title}</td>
+                        <td>${patient.First}</td>
+                        <td>${patient.Last}</td>
+                        <td>${patient.DOB}</td>
+                        <td>${patient.Gender}</td>
+                        <td>${patient.Address}</td>
+                        <td>${patient.Email}</td>
+                        <td>${patient.Telephone}</td>
+                        <td>${a.date}</td>
+                        <td>${a.time}</td>
+                    </tr>`;
                     }
                 });
 
