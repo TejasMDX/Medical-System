@@ -35,7 +35,6 @@ async function loadJSON() {
     const patients = await response4.json();
 
     await adding_to_db(admin, doctors, medicines, patients);
-    setupAdminLogin();
 }
 
 
@@ -134,7 +133,6 @@ async function start_db() {
         }
         else {
             console.log('Database already exists. No changes made.');
-            setupAdminLogin();
         }
     };
 }
