@@ -31,7 +31,7 @@
 
     <h2>Book an Appointment</h2>
 
-    <form>
+    <form id="appointmentForm">
         <label for="doctor">Choose a Doctor:</label>
 
         <select id="doctor" name="doctor" required>
@@ -134,7 +134,7 @@
 
                     const appointmentID = get_appointment_id(appointments);
 
-                    const patientID = "Temp"
+                    const patientID = 1
 
                     const appointment = {
                     appointment_id: appointmentID,
@@ -145,7 +145,15 @@
                 };
 
                 appointmentStore.add(appointment);
-                }
+                };
+
+                transaction.oncomplete = function() {
+
+                    alert("Booked appointment");
+
+                    // Clear all form entries.
+                    document.getElementById("appointmentForm").reset();
+                };
 
             }}
 
