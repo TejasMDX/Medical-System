@@ -128,6 +128,7 @@ async function start_db() {
         console.log('Database opened successfully.');
 
         if (newDatabase) {
+            console.log('Database created successfully.');
             loadJSON();
         }
         else {
