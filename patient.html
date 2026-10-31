@@ -50,7 +50,7 @@
 
         <br><br>
 
-        <button type="button">Book Appointment</button>
+        <button type="button" onclick="bookAppointment()" >Book Appointment</button>
     </form>
 
     <h2>My Medications</h2>
@@ -63,28 +63,107 @@
 
     </div>
 
-    <script>
-    // Fetch the doctors from the JSON file
-    fetch("json/doctors.json")
-        // Convert the JSON file into JavaScript data
-        .then(response => response.json())
-        // Get the list of doctors
-        .then(doctors => {
-            // Find the doctor list
-            const doctorSelect = document.getElementById("doctor");
 
-            doctors.forEach(doctor => {
-                // Create a new option for the list
-                const option = document.createElement("option");
-                // Use the doctor's ID as the option value
-                option.value = doctor.id;
-                // Display the doctor's full name
-                option.textContent =
-                    "Dr. " + doctor.first_name + " " + doctor.last_name;
-                // Add the doctor to the list
-                doctorSelect.appendChild(option);
+    <script>
+
+        let db;
+
+        // Open the existing CarePoint database.
+        const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
+
+        doctorDBRequest.onsuccess = function(event) {
+
+            // Access the database.
+           db = event.target.result;
+
+            // Start a transaction to read doctor records.
+            const transaction = db.transaction(["Doctor"], "readonly");
+
+            // Access the Doctors object store.
+            const doctorsStore = transaction.objectStore("Doctor");
+
+            // Get all the doctor records.
+            const request = doctorsStore.getAll();
+
+            request.onsuccess = function() {
+
+                const doctors = request.result;
+
+                // Access the doctor dropdown.
+                const doctorDropdown = document.getElementById("doctor");
+
+                // Add doctors to the dropdown.
+                doctors.forEach(function(doctor) {
+
+                    const option = document.createElement("option");
+
+                    option.value = doctor.id;
+                    option.textContent = "Dr. " + doctor.first_name + " " + doctor.last_name;
+
+                    doctorDropdown.appendChild(option);
+
+                });
+
+            };
+
+        };
+
+        function bookAppointment(){
+            let doctorId = document.getElementById("doctor").value;
+            let date = document.getElementById("date").value;
+            let time = document.getElementById("time").value;
+
+            if (doctorId === "" || date === "" || time === "") {
+
+                alert("Please fill in all three fields.");
+
+                }
+            else {
+
+                const transaction = db.transaction(["Appointment"], "readwrite");
+
+                // Access the appointment object store.
+                const appointmentStore = transaction.objectStore("Appointment");
+
+                // Get all existing appointment
+                const request = appointmentStore.getAll();
+
+
+                request.onsuccess = function() {
+                    const appointments = request.result;
+
+                    const appointmentID = get_appointment_id(appointments);
+
+                    const patientID = "Temp"
+
+                    const appointment = {
+                    appointment_id: appointmentID,
+                    doctor_id: doctorId,
+                    patient_id: patientID,
+                    date: date,
+                    time: time
+                };
+
+                appointmentStore.add(appointment);
+                }
+
+            }}
+
+        function get_appointment_id(appointments) {
+
+            let appointmentID = 1;
+
+            appointments.forEach(function(appointment) {
+
+                if (Number(appointment.appointment_id) >= appointmentID) {
+                    appointmentID = Number(appointment.appointment_id) + 1;
+                }
+
             });
-        });
+
+            return appointmentID;
+        }
+
     </script>
 
 </body>

@@ -60,9 +60,7 @@
 
     <button type="button">Save Note</button>
     </div>
-
-    <script src="import.js"></script>
-    
+ 
     <script>
 
         // Open the existing CarePoint database.
@@ -120,7 +118,7 @@
                 document.getElementById("medicine").appendChild(option);
             });
 
-            
+
         loadData().catch(function(error) {
             console.log("Could not load the JSON files.", error);
         });

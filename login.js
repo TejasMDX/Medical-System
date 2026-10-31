@@ -254,6 +254,7 @@ document.getElementById('LoginForm').addEventListener(
 
             const account = validAccounts[0];
 
+
             database.close();
 
 
@@ -295,3 +296,4 @@ document.getElementById('LoginForm').addEventListener(
 
     }
 );
+
