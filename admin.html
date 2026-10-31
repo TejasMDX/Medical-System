@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title> Admin Portal </title>
-<link rel="stylesheet" href="style.css">
+    <title> Admin Portal </title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -19,50 +19,58 @@
 
     <p>Welcome to your admin account.</p>
 
+    <button type="button" onclick="showPatientSection()">Patients</button>
+
+    <button type="button" onclick="showDoctorSection()">Doctors</button>
+
+    <div id="patientSection">
+
+    <h1>Patients Section</h1>
+
     <h2>Add Patient</h2>
 
     <p>Add a new patient's information below.</p>
 
     <form id="patientForm">
 
-    <!-- These fields are used to enter the patient's details. -->
-    <label for="nhsInput">NHS:</label>
-    <input id="nhsInput" type="text" required>
-    <br>
+        <!-- These fields are used to enter the patient's details. -->
+        <label for="nhsInput">NHS:</label>
+        <input id="nhsInput" type="text" required>
+        <br>
 
-    <label for="titleInput">Title:</label>
-    <input id="titleInput" type="text" required>
-    <br>
+        <label for="titleInput">Title:</label>
+        <input id="titleInput" type="text" required>
+        <br>
 
-    <label for="firstInput">First Name:</label>
-    <input id="firstInput" type="text" required>
-    <br>
+        <label for="firstInput">First Name:</label>
+        <input id="firstInput" type="text" required>
+        <br>
 
-    <label for="lastInput">Last Name:</label>
-    <input id="lastInput" type="text" required>
-    <br>
+        <label for="lastInput">Last Name:</label>
+        <input id="lastInput" type="text" required>
+        <br>
 
-    <label for="dobInput">DOB:</label>
-    <input id="dobInput" type="text" placeholder="DD/MM/YYYY" required>
-    <br>
+        <label for="dobInput">DOB:</label>
+        <input id="dobInput" type="text" placeholder="DD/MM/YYYY" required>
+        <br>
 
-    <label for="genderInput">Gender:</label>
-    <input id="genderInput" type="text" required>
-    <br>
+        <label for="genderInput">Gender:</label>
+        <input id="genderInput" type="text" required>
+        <br>
 
-    <label for="addressInput">Address:</label>
-    <input id="addressInput" type="text" required>
-    <br>
+        <label for="addressInput">Address:</label>
+        <input id="addressInput" type="text" required>
+        <br>
 
-    <label for="emailInput">Email:</label>
-    <input id="emailInput" type="email" required>
-    <br>
+        <label for="emailInput">Email:</label>
+        <input id="emailInput" type="email" required>
+        <br>
 
-    <label for="telephoneInput">Telephone:</label>
-    <input id="telephoneInput" type="text" required>
-    <br>
+        <label for="telephoneInput">Telephone:</label>
+        <input id="telephoneInput" type="text" required>
+        <br>
 
-    <button type="submit">Add patient</button>
+        <button type="submit">Add patient</button>
 
     </form>
 
@@ -75,15 +83,20 @@
     <div id="output"></div>
 
     <h2>Delete Patient Records</h2>
+
     <p>Delete patient information below.</p>
 
     <!-- This field is used to enter the ID of the patient to delete. -->
-    <label for="deleteId">Patient ID:</label>
-    <input id="deleteId" type="text" required>
-
+    <label for="deletePatientId">Patient ID:</label>
+    <input id="deletePatientId" type="text" required>
 
     <button onclick="deletePatient()">Delete Patients</button>
 
+    </div>
+
+    <div id="doctorSection" style="display: none;">
+
+    <h1>Doctors Section</h1>
 
     <h2>Add Doctor</h2>
 
@@ -91,32 +104,32 @@
 
     <form id="doctorForm">
 
-    <!-- These fields are used to enter the doctor's details. -->
-    <label for="doctorFirstInput">First Name:</label>
-    <input id="doctorFirstInput" type="text" required>
-    <br>
+        <!-- These fields are used to enter the doctor's details. -->
+        <label for="doctorFirstInput">First Name:</label>
+        <input id="doctorFirstInput" type="text" required>
+        <br>
 
-    <label for="doctorLastInput">Last Name:</label>
-    <input id="doctorLastInput" type="text" required>
-    <br>
+        <label for="doctorLastInput">Last Name:</label>
+        <input id="doctorLastInput" type="text" required>
+        <br>
 
-    <label for="doctorEmailInput">Email:</label>
-    <input id="doctorEmailInput" type="email" required>
-    <br>
+        <label for="doctorEmailInput">Email:</label>
+        <input id="doctorEmailInput" type="email" required>
+        <br>
 
-    <label for="doctorGenderInput">Gender:</label>
-    <input id="doctorGenderInput" type="text" required>
-    <br>
+        <label for="doctorGenderInput">Gender:</label>
+        <input id="doctorGenderInput" type="text" required>
+        <br>
 
-    <label for="doctorAddressInput">Address:</label>
-    <input id="doctorAddressInput" type="text" required>
-    <br>
+        <label for="doctorAddressInput">Address:</label>
+        <input id="doctorAddressInput" type="text" required>
+        <br>
 
-    <label for="doctorTelephoneInput">Telephone:</label>
-    <input id="doctorTelephoneInput" type="text" required>
-    <br>
+        <label for="doctorTelephoneInput">Telephone:</label>
+        <input id="doctorTelephoneInput" type="text" required>
+        <br>
 
-    <button type="submit">Add Doctor</button>
+        <button type="submit">Add Doctor</button>
 
     </form>
 
@@ -125,7 +138,7 @@
     <p>View registered doctor information below.</p>
 
     <!-- This button loads and displays the doctor records. -->
-    <button onclick="setupDoctors().then(showAllDoctors)">Show Doctors</button>
+    <button onclick="showAllDoctors()">Show Doctors</button>
     <div id="doctorOutput"></div>
 
     <h2>Delete Doctor Records</h2>
@@ -138,237 +151,314 @@
 
     <button onclick="deleteDoctor()">Delete Doctor</button>
 
+    </div>
 
-
+    <script src="import.js"></script>
 
     <script>
-        // This variable stores the patient data.
-        let db = null;
 
-        async function setupDatabase() {
-                // This loads the patient information from the JSON file.
-                const response = await fetch("json/patients.json");
+        function showPatientSection() {
 
-                // This converts the response into JavaScript data.
-                db = await response.json();
+            document.getElementById("patientSection").style.display = "block";
+
+            document.getElementById("doctorSection").style.display = "none";
         }
 
-        // This loads the patients and displays their records.
-        setupDatabase().then(showAllPatients);
+
+        function showDoctorSection() {
+
+            document.getElementById("patientSection").style.display = "none";
+
+            document.getElementById("doctorSection").style.display = "block";
+        }
+
 
         function showAllPatients() {
-            // This makes sure the data can be displayed as a list.
-            const patients = Array.isArray(db) ? db : [db];
 
-            // This creates the table headings for the patient records.
-            let html = `<table border="1">
-                <tr>
-                    <th>ID</th>
-                    <th>NHS</th>
-                    <th>Title</th>
-                    <th>First</th>
-                    <th>Last</th>
-                    <th>DOB</th>
-                    <th>Gender</th>
-                    <th>Address</th>
-                    <th>Email</th>
-                    <th>Telephone</th>
-                </tr>`;
 
-            // This adds each patient's details to the table.
-            patients.forEach(p => {
-                html += `<tr>
-                    <td>${p.id}</td>
-                    <td>${p.NHS}</td>
-                    <td>${p.Title}</td>
-                    <td>${p.First}</td>
-                    <td>${p.Last}</td>
-                    <td>${p.DOB}</td>
-                    <td>${p.Gender}</td>
-                    <td>${p.Address}</td>
-                    <td>${p.Email}</td>
-                    <td>${p.Telephone}</td>
-                </tr>`;
-            });
+            // Start a transaction to read patient records.
+            const transaction = db.transaction(["Patients"], "readonly");
 
-            // This closes the patient table.
-            html += `</table>`;
+            // Access the Patients object store.
+            const patientsStore = transaction.objectStore("Patients");
 
-            // This displays the patient table on the page.
-            document.getElementById("output").innerHTML = html;
+            // Get all the patient records.
+            const request = patientsStore.getAll();
+
+            request.onsuccess = function() {
+
+                const patients = request.result;
+
+                // This creates the table headings for the patient records.
+                let html = `<table border="1">
+                    <tr>
+                        <th>ID</th>
+                        <th>NHS</th>
+                        <th>Title</th>
+                        <th>First</th>
+                        <th>Last</th>
+                        <th>DOB</th>
+                        <th>Gender</th>
+                        <th>Address</th>
+                        <th>Email</th>
+                        <th>Telephone</th>
+                    </tr>`;
+
+                // This adds each patient's details to the table.
+                patients.forEach(p => {
+                    html += `<tr>
+                        <td>${p.id}</td>
+                        <td>${p.NHS}</td>
+                        <td>${p.Title}</td>
+                        <td>${p.First}</td>
+                        <td>${p.Last}</td>
+                        <td>${p.DOB}</td>
+                        <td>${p.Gender}</td>
+                        <td>${p.Address}</td>
+                        <td>${p.Email}</td>
+                        <td>${p.Telephone}</td>
+                    </tr>`;
+                });
+
+                // This closes the patient table.
+                html += `</table>`;
+
+                // This displays the patient table on the page.
+                document.getElementById("output").innerHTML = html;
+            };
         }
 
+
         function addPatient() {
-        // This runs when the patient form is submitted.
-        document.getElementById("patientForm").addEventListener("submit", function(event) {
 
-            // This stops the page from refreshing when the form is submitted.
-            event.preventDefault();
+            // This runs when the patient form is submitted.
+            document.getElementById("patientForm").addEventListener("submit", function(event) {
 
-            // This collects the details entered into the form.
-            const patient = {
-                // This gives the new patient the next available ID.
-                id: Math.max(0, ...db.map(p => Number(p.id) || 0)) + 1,
+                // This stops the page from refreshing.
+                event.preventDefault();
 
-                // These lines get the patient's details and remove extra spaces.
-                NHS: document.getElementById("nhsInput").value.trim(),
-                Title: document.getElementById("titleInput").value.trim(),
-                First: document.getElementById("firstInput").value.trim(),
-                Last: document.getElementById("lastInput").value.trim(),
-                DOB: document.getElementById("dobInput").value.trim(),
-                Gender: document.getElementById("genderInput").value.trim(),
-                Address: document.getElementById("addressInput").value.trim(),
-                Email: document.getElementById("emailInput").value.trim(),
-                Telephone: document.getElementById("telephoneInput").value.trim()
-            };
+                // Start a transaction to add a patient.
+                const transaction = db.transaction(["Patients"], "readwrite");
 
-            // This adds the new patient to the list.
-            db.push(patient);
+                // Access the Patients object store.
+                const patientsStore = transaction.objectStore("Patients");
 
-            // This converts the patient list into a string and saves it in local storage.
-            localStorage.setItem("patients", JSON.stringify(db));
+                // Get all existing patients.
+                const request = patientsStore.getAll();
 
-            // This clears the form after adding the patient.
-            document.getElementById("patientForm").reset();
+                request.onsuccess = function() {
 
+                    const patients = request.result;
 
-        });
+                    // This finds the next available ID.
+                    let newId = 1;
+
+                    patients.forEach(p => {
+                        if (Number(p.id) >= newId) {
+                            newId = Number(p.id) + 1;
+                        }
+                    });
+
+                    // This collects the details entered into the form.
+                    const patient = {
+
+                        id: newId,
+                        NHS: document.getElementById("nhsInput").value.trim(),
+                        Title: document.getElementById("titleInput").value.trim(),
+                        First: document.getElementById("firstInput").value.trim(),
+                        Last: document.getElementById("lastInput").value.trim(),
+                        DOB: document.getElementById("dobInput").value.trim(),
+                        Gender: document.getElementById("genderInput").value.trim(),
+                        Address: document.getElementById("addressInput").value.trim(),
+                        Email: document.getElementById("emailInput").value.trim(),
+                        Telephone: document.getElementById("telephoneInput").value.trim()
+                    };
+
+                    // Add the new patient to IndexedDB.
+                    const addRequest = patientsStore.add(patient);
+
+                };
+
+                transaction.oncomplete = function() {
+
+                    // Clear the form after adding the patient.
+                    document.getElementById("patientForm").reset();
+
+                    // Refresh the patient records.
+                    showAllPatients();
+                };
+
+            });
         }
 
         // This sets up the form so patients can be added.
         addPatient();
 
+
         function deletePatient() {
+
             // This gets the ID entered for the patient to delete.
-            const id = document.getElementById("deleteId").value;
+            const id = Number(document.getElementById("deletePatientId").value);
 
-            // This searches the list for a patient with the entered ID.
-            const index = db.findIndex(p => p.id == id);
+            // Start a transaction to delete a patient.
+            const transaction = db.transaction(["Patients"], "readwrite");
 
-                // This removes the patient from the list.
-                db.splice(index, 1);
+            // Access the Patients object store.
+            const store = transaction.objectStore("Patients");
 
-                // This saves the updated patient list.
-                localStorage.setItem("patients", JSON.stringify(db));
+            // Delete the patient with the entered ID.
+            const deleteRequest = store.delete(id);
+
+            deleteRequest.onsuccess = function() {
+
+                // This clears the ID field.
+                document.getElementById("deletePatientId").value = "";
 
                 // This refreshes the patient records.
                 showAllPatients();
-            }
+            };
 
-
-        // This variable stores the doctor data.
-        let doctors = null;
-
-        async function setupDoctors() {
-                // This loads the doctor information from the JSON file.
-                const response = await fetch("json/doctors.json");
-
-                // This converts the response into JavaScript data.
-                doctors = await response.json();
         }
 
-        // This loads the doctor data.
-        setupDoctors();
 
         function showAllDoctors() {
-            // This makes sure the doctor data can be displayed as a list.
-            const doctorList = Array.isArray(doctors) ? doctors : [doctors];
 
-            // This creates the table headings for the doctor records.
-            let html = `<table border="1">
-                <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Gender</th>
-                    <th>Address</th>
-                    <th>Telephone</th>
-                </tr>`;
+            // Start a transaction to read doctor records.
+            const transaction = db.transaction(["Doctor"], "readonly");
 
-            // This adds each doctor's details to the table.
-            doctorList.forEach(d => {
-                html += `<tr>
-                    <td>${d.id}</td>
-                    <td>${d.first_name}</td>
-                    <td>${d.last_name}</td>
-                    <td>${d.email}</td>
-                    <td>${d.gender}</td>
-                    <td>${d.Address}</td>
-                    <td>${d.Telephone}</td>
-                </tr>`;
-            });
+            // Access the Doctor object store.
+            const doctorStore = transaction.objectStore("Doctor");
 
-            // This closes the doctor table.
-            html += `</table>`;
+            // Get all the doctor records.
+            const request = doctorStore.getAll();
 
-            // This displays the doctor table on the page.
-            document.getElementById("doctorOutput").innerHTML = html;
+            request.onsuccess = function() {
+
+                const doctors = request.result;
+
+                // This creates the table headings for the doctor records.
+                let html = `<table border="1">
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Gender</th>
+                        <th>Address</th>
+                        <th>Telephone</th>
+                    </tr>`;
+
+                // This adds each doctor's details to the table.
+                doctors.forEach(d => {
+                    html += `<tr>
+                        <td>${d.id}</td>
+                        <td>${d.first_name}</td>
+                        <td>${d.last_name}</td>
+                        <td>${d.email}</td>
+                        <td>${d.gender}</td>
+                        <td>${d.Address}</td>
+                        <td>${d.Telephone}</td>
+                    </tr>`;
+                });
+
+                // This closes the doctor table.
+                html += `</table>`;
+
+                // This displays the doctor table on the page.
+                document.getElementById("doctorOutput").innerHTML = html;
+            };
+
         }
 
 
         function addDoctor() {
-        // This runs when the doctor form is submitted.
-        document.getElementById("doctorForm").addEventListener("submit", function(event) {
 
-            // This stops the page from refreshing when the form is submitted.
-            event.preventDefault();
+            // This runs when the doctor form is submitted.
+            document.getElementById("doctorForm").addEventListener("submit", function(event) {
 
-            // This collects the details entered into the form.
-            const doctor = {
-                // This gives the new doctor the next available ID.
-                id: Math.max(0, ...doctors.map(d => Number(d.id) || 0)) + 1,
+                // This stops the page from refreshing.
+                event.preventDefault();
 
-                // These lines get the doctor's details and remove extra spaces.
-                first_name: document.getElementById("doctorFirstInput").value.trim(),
-                last_name: document.getElementById("doctorLastInput").value.trim(),
-                email: document.getElementById("doctorEmailInput").value.trim(),
-                gender: document.getElementById("doctorGenderInput").value.trim(),
-                Address: document.getElementById("doctorAddressInput").value.trim(),
-                Telephone: document.getElementById("doctorTelephoneInput").value.trim()
-            };
+                // Start a transaction to add a doctor.
+                const transaction = db.transaction(["Doctor"], "readwrite");
 
-            // This adds the new doctor to the list.
-            doctors.push(doctor);
+                // Access the Doctor object store.
+                const doctorStore = transaction.objectStore("Doctor");
 
-            // This converts the doctor list into a string and saves it in local storage.
-            localStorage.setItem("doctors", JSON.stringify(doctors));
+                // Get all existing doctors.
+                const request = doctorStore.getAll();
 
-            // This clears the form after adding the doctor.
-            document.getElementById("doctorForm").reset();
+                request.onsuccess = function() {
 
-            // This updates the doctor records on the page.
-            showAllDoctors();
+                    const doctors = request.result;
 
-        });
+                    // This finds the next available ID.
+                    let newId = 1;
+
+                    doctors.forEach(d => {
+                        if (Number(d.id) >= newId) {
+                            newId = Number(d.id) + 1;
+                        }
+                    });
+
+                    // This collects the details entered into the form.
+                    const doctor = {
+
+                        id: newId,
+                        first_name: document.getElementById("doctorFirstInput").value.trim(),
+                        last_name: document.getElementById("doctorLastInput").value.trim(),
+                        email: document.getElementById("doctorEmailInput").value.trim(),
+                        gender: document.getElementById("doctorGenderInput").value.trim(),
+                        Address: document.getElementById("doctorAddressInput").value.trim(),
+                        Telephone: document.getElementById("doctorTelephoneInput").value.trim()
+                    };
+
+                    // Add the new doctor to IndexedDB.
+                    const addRequest = doctorStore.add(doctor);
+
+                };
+
+                transaction.oncomplete = function() {
+
+                    // Clear the form after adding the doctor.
+                    document.getElementById("doctorForm").reset();
+
+                    // Refresh the doctor records.
+                    showAllDoctors();
+                };
+
+            });
         }
 
         // This sets up the form so doctors can be added.
         addDoctor();
 
+
         function deleteDoctor() {
-            // This gets the ID entered for the doctor to delete.
-            const id = document.getElementById("deleteDoctorId").value;
 
-            // This searches the list for a doctor with the entered ID.
-            const index = doctors.findIndex(d => d.id == id);
+            // This gets the ID entered for the doctors to delete.
+            const id = Number(document.getElementById("deleteDoctorId").value);
 
-            // This checks whether a doctor with the entered ID was found.
-            if (index !== -1) {
-                // This removes the doctor from the list.
-                doctors.splice(index, 1);
+            // Start a transaction to delete a doctor.
+            const transaction = db.transaction(["Doctor"], "readwrite");
 
-                // This saves the updated doctor list.
-                localStorage.setItem("doctors", JSON.stringify(doctors));
+            // Access the Doctors object store.
+            const store = transaction.objectStore("Doctor");
+
+            // Delete the doctor with the entered ID.
+            const deleteRequest = store.delete(id);
+
+            deleteRequest.onsuccess = function() {
+
+                // This clears the ID field.
+                document.getElementById("deleteDoctorId").value = "";
 
                 // This refreshes the doctor records.
                 showAllDoctors();
-            }
-        }
+            };
+        };
 
-
-
-</script>
+    </script>
 
 </body>
 </html>
