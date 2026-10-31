@@ -135,3 +135,4 @@ async function start_db() {
         }
     };
 }
+start_db();
