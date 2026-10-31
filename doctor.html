@@ -61,24 +61,54 @@
     <button type="button">Save Note</button>
     </div>
 
+    <script src="import.js"></script>
+    
     <script>
-        // Fetch the patients and medicines
-        async function loadData() {
-            const patientResponse = await fetch("json/patients.json");
-            const patients = await patientResponse.json();
 
-            const medicineResponse = await fetch("json/medicines.json");
-            const medicines = await medicineResponse.json();
+        // Open the existing CarePoint database.
+        const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
 
-            // Add patients to the dropdown
-            patients.forEach(function(patient) {
-                const option = document.createElement("option");
+        doctorDBRequest.onsuccess = function(event) {
 
-                option.value = patient.id;
-                option.textContent = patient.First + " " + patient.Last;
+            // Access the database.
+            const doctorDB = event.target.result;
 
-                document.getElementById("patient").appendChild(option);
-            });
+            // Start a transaction to read patient records.
+            const transaction = doctorDB.transaction(["Patients"], "readonly");
+
+            // Access the Patients object store.
+            const patientsStore = transaction.objectStore("Patients");
+
+            // Get all the patient records.
+            const request = patientsStore.getAll();
+
+            request.onsuccess = function() {
+
+                const patients = request.result;
+
+                // Access the patient dropdown.
+                const patientDropdown = document.getElementById("patient");
+
+                // Add patients to the dropdown.
+                patients.forEach(function(patient) {
+
+                    const option = document.createElement("option");
+
+                    option.value = patient.id;
+                    option.textContent = patient.First + " " + patient.Last;
+
+                    patientDropdown.appendChild(option);
+
+                });
+
+            };
+
+            transaction.oncomplete = function() {
+                doctorDB.close();
+            };
+
+
+        };
 
             // Add medicines to the dropdown
             medicines.forEach(function(medicine) {
@@ -89,8 +119,8 @@
 
                 document.getElementById("medicine").appendChild(option);
             });
-        }
 
+            
         loadData().catch(function(error) {
             console.log("Could not load the JSON files.", error);
         });

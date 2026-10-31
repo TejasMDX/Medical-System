@@ -296,6 +296,10 @@ body.login-page {
 .doctor-page {
     background-color: #f1f7f5;
     color: #34443e;
+    background-image: url("images/image9.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 /* Dashboard heading */
@@ -391,8 +395,6 @@ body.login-page {
         margin-right: 8px;
     }
 }
-
-
 
 /* Patient page background and layout */
 .patient-page {
@@ -523,7 +525,6 @@ body.login-page {
     }
 }
 
-
 /* Login page */
 body.login-page {
     min-height: 100vh;
@@ -633,7 +634,6 @@ body.login-page {
         padding: 28px 22px;
     }
 }
-
 
 /* Centre the admin dashboard content without affecting the navigation bar */
 body:has(#patientForm) {
