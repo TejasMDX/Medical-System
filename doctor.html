@@ -159,20 +159,18 @@
             console.log("Could not load the JSON files.", error);
         });
 
-
         function showAppointments(db) {
 
             const doctorID = 1;
 
-
-            // Start a transaction to read patient records.
+            // Start a transaction to read appointment and patient records.
             const transaction = db.transaction(["Appointment", "Patients"], "readonly");
 
-            // Access the Appointment object store.
+            // Access the object stores.
             const appointmentStore = transaction.objectStore("Appointment");
             const patientsStore = transaction.objectStore("Patients");
 
-            // Get all the patient records.
+            // Get all the records.
             const appointmentRequest = appointmentStore.getAll();
             const patientsRequest = patientsStore.getAll();
 
@@ -181,51 +179,47 @@
                 const appointments = appointmentRequest.result;
                 const patients = patientsRequest.result;
 
-                // This creates the table headings for the patient records.
+                // This creates the table headings.
                 let html = `<table border="1">
-            <tr>
-                <th>NHS</th>
-                <th>Title</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>DOB</th>
-                <th>Gender</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Telephone</th>
-                <th>Date</th>
-                <th>Time</th>
-            </tr>`;
+                    <tr>
+                        <th>Appointment ID</th>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                    </tr>`;
 
                 appointments.forEach(a => {
+
                     if (Number(a.doctor_id) === Number(doctorID)) {
+
                         const patient = patients.find(p =>
-                    Number(p.id) === Number(a.patient_id)
-                );
-                        html += `<tr>
-                        <td>${patient.NHS}</td>
-                        <td>${patient.Title}</td>
-                        <td>${patient.First}</td>
-                        <td>${patient.Last}</td>
-                        <td>${patient.DOB}</td>
-                        <td>${patient.Gender}</td>
-                        <td>${patient.Address}</td>
-                        <td>${patient.Email}</td>
-                        <td>${patient.Telephone}</td>
-                        <td>${a.date}</td>
-                        <td>${a.time}</td>
-                    </tr>`;
+                            Number(p.id) === Number(a.patient_id)
+                        );
+
+                        if (patient) {
+
+                            html += `<tr>
+                                <td>${a.appointment_id}</td>
+                                <td>${patient.Title} ${patient.First} ${patient.Last}</td>
+                                <td>${a.date}</td>
+                                <td>${a.time}</td>
+                            </tr>`;
+
+                        }
+
                     }
+
                 });
 
-                // This closes the patient table.
+                // This closes the table.
                 html += `</table>`;
 
-                // This displays the patient table on the page.
+                // This displays the table.
                 document.getElementById("appointments").innerHTML = html;
-            };
-        };
 
+            };
+
+        }
         
         function chooseMedicine(db) {
             // Start a transaction to read patient records.
@@ -329,9 +323,61 @@
             return prescriptionID;
         }
 
+        function viewPatientRecords() {
+
+            let patientID = document.getElementById("patient").value;
+
+            if (patientID === "") {
+                alert("Please select a patient.");
+                return;
+            }
+
+            // Start a transaction to read patient records.
+            const transaction = db.transaction(["Patients"], "readonly");
+
+            // Access the Patients object store.
+            const patientsStore = transaction.objectStore("Patients");
+
+            // Get the selected patient using their ID.
+            const request = patientsStore.get(Number(patientID));
+
+            request.onsuccess = function() {
+
+                const patient = request.result;
+
+                if (patient) {
+
+                    let html = `<h3>Patient Details</h3>
+                        <table border="1">
+                            <tr><th>NHS</th><td>${patient.NHS}</td></tr>
+                            <tr><th>Title</th><td>${patient.Title}</td></tr>
+                            <tr><th>First Name</th><td>${patient.First}</td></tr>
+                            <tr><th>Last Name</th><td>${patient.Last}</td></tr>
+                            <tr><th>Date of Birth</th><td>${patient.DOB}</td></tr>
+                            <tr><th>Gender</th><td>${patient.Gender}</td></tr>
+                            <tr><th>Address</th><td>${patient.Address}</td></tr>
+                            <tr><th>Email</th><td>${patient.Email}</td></tr>
+                            <tr><th>Telephone</th><td>${patient.Telephone}</td></tr>
+                        </table>`;
+
+                    document.getElementById("patientRecords").innerHTML = html;
+
+                }
+
+                else {
+                    alert("Patient not found.");
+                }
+
+            };
+
+        }
+
     </script>
 
     <script>
+    
+    //sessionStorage.setItem("userRole", "doctor");
+    
     const userRole = sessionStorage.getItem("userRole")
 
     if (userRole === "doctor" || userRole === "admin") {
