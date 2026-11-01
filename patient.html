@@ -12,14 +12,14 @@
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
 
-        <a href="login.html" class="login-button">Login</a>
+        <a id="loginButton" href="login.html" class="login-button">Login</a>
     </nav>
 
     <div>
         <p id="access_patient">Log in as a patient to access this portal.</p>
     </div>
 
-    <div id="patient_dashboard">
+    <div hidden id="patient_dashboard">
             <h1>Patient Dashboard</h1>
 
 
@@ -31,7 +31,7 @@
 
     <h2>Book an Appointment</h2>
 
-    <form>
+    <form id="appointmentForm">
         <label for="doctor">Choose a Doctor:</label>
 
         <select id="doctor" name="doctor" required>
@@ -57,16 +57,19 @@
 
     <p>View your prescribed medications and instructions below.</p>
 
+    <div id="medications"></div>
+
     <h2>My Medical History</h2>
 
     <p>Your medical history and doctor's notes will appear here.</p>
 
     </div>
 
-
     <script>
 
         let db;
+        let doctors = [];
+        let medicines = [];
 
         // Open the existing CarePoint database.
         const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
@@ -74,7 +77,14 @@
         doctorDBRequest.onsuccess = function(event) {
 
             // Access the database.
-           db = event.target.result;
+            db = event.target.result;
+
+            loadDoctors();
+            loadMedicines();
+
+        };
+
+        function loadDoctors() {
 
             // Start a transaction to read doctor records.
             const transaction = db.transaction(["Doctor"], "readonly");
@@ -87,26 +97,34 @@
 
             request.onsuccess = function() {
 
-                const doctors = request.result;
+                doctors = request.result;
 
-                // Access the doctor dropdown.
-                const doctorDropdown = document.getElementById("doctor");
+                displayDoctors(doctors);
 
-                // Add doctors to the dropdown.
-                doctors.forEach(function(doctor) {
-
-                    const option = document.createElement("option");
-
-                    option.value = doctor.id;
-                    option.textContent = "Dr. " + doctor.first_name + " " + doctor.last_name;
-
-                    doctorDropdown.appendChild(option);
-
-                });
+                show_medications(db);
 
             };
 
-        };
+        }
+
+        function displayDoctors(doctors) {
+
+            // Access the doctor dropdown.
+            const doctorDropdown = document.getElementById("doctor");
+
+            // Add doctors to the dropdown.
+            doctors.forEach(function(doctor) {
+
+                const option = document.createElement("option");
+
+                option.value = doctor.id;
+                option.textContent = "Dr. " + doctor.first_name + " " + doctor.last_name;
+
+                doctorDropdown.appendChild(option);
+
+            });
+
+        }
 
         function bookAppointment(){
             let doctorId = document.getElementById("doctor").value;
@@ -134,7 +152,7 @@
 
                     const appointmentID = get_appointment_id(appointments);
 
-                    const patientID = "Temp"
+                    const patientID = 1
 
                     const appointment = {
                     appointment_id: appointmentID,
@@ -145,7 +163,15 @@
                 };
 
                 appointmentStore.add(appointment);
-                }
+                };
+
+                transaction.oncomplete = function() {
+
+                    alert("Booked appointment");
+
+                    // Clear all form entries.
+                    document.getElementById("appointmentForm").reset();
+                };
 
             }}
 
@@ -164,7 +190,96 @@
             return appointmentID;
         }
 
+        function show_medications(db){
+
+            const patientID = 1
+
+            // Start a transaction to read patient records.
+            const transaction = db.transaction(["Prescription"], "readonly");
+
+            // Access the Appointment object store.
+            const prescriptionsStore = transaction.objectStore("Prescription");
+
+            // Get all the patient records.
+            const prescriptionsRequest = prescriptionsStore.getAll();
+
+            transaction.oncomplete = function() {
+
+                const prescriptions = prescriptionsRequest.result;
+
+                // This creates the table headings for the patient records.
+                let html = `<table border="1">
+                <tr>
+                    <th>Date</th>
+                    <th>Doctor</th>
+                    <th>Drug</th>
+                    <th>Notes</th>
+                </tr>`;
+
+                prescriptions.forEach(a => {
+                    if (Number(a.patient_id) === Number(patientID)) {
+                    html += `<tr>
+                    <td>${a.date}</td>
+                    <td>${getDoctorName(doctors, a.doctor_id)}</td>
+                    <td>${getDrugName(medicines, a.medicine_id)}</td>
+                    <td>${a.notes}</td>
+                </tr>`;
+                    }});
+
+                // This closes the patient table.
+                html += `</table>`;
+
+                // This displays the patient table on the page.
+                document.getElementById("medications").innerHTML = html;
+            };
+        };
+
+        function getDoctorName(doctors, doctorID){
+            const doctor = doctors.find(d => Number(d.id) === Number(doctorID));
+
+            if (doctor) {
+                return "Dr. " + doctor.first_name + " " + doctor.last_name;
+            }
+        };
+
+        function loadMedicines() {
+
+            const transaction = db.transaction(["Medicine"], "readonly");
+
+            const medicineStore = transaction.objectStore("Medicine");
+
+            const request = medicineStore.getAll();
+
+            request.onsuccess = function() {
+
+                medicines = request.result;
+
+            };
+
+        }
+
+        function getDrugName(medicines, medicineID){
+
+            const medicine = medicines.find(m => Number(m.id) === Number(medicineID));
+
+            if (medicine) {
+                return medicine.Drug;
+            }
+        };
+        
+
     </script>
+
+    <script>
+        const userRole = sessionStorage.getItem("userRole")
+
+        if (userRole === "patient" || userRole === "admin") {
+            document.getElementById("patient_dashboard").hidden = false
+            document.getElementById("access_patient").hidden = true
+        }
+    </script>
+
+<script src="logout.js"></script>
 
 </body>
 </html>

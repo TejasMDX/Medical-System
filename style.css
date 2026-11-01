@@ -291,15 +291,33 @@ body.login-page {
     }
 }
 
-
-/* Doctor portal design */
+/* Doctor portal background and layout */
 .doctor-page {
-    background-color: #f1f7f5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    background: linear-gradient(rgba(244, 249, 247, 0.45), rgba(244, 249, 247, 0.45)),
+                url("images/image7.jpg") center/cover no-repeat;
+    background-attachment: fixed;
     color: #34443e;
-    background-image: url("images/image9.jpg");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Navigation bar */
+.doctor-page nav {
+    width: 100%;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Centre the doctor dashboard */
+.doctor-page #doctor_dashboard {
+    width: 100%;
 }
 
 /* Dashboard heading */
@@ -633,6 +651,18 @@ body.login-page {
     .login-page .login-container {
         padding: 28px 22px;
     }
+}
+
+/* Admin portal background */
+.admin-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    background: linear-gradient(rgba(244, 249, 247, 0.45), rgba(244, 249, 247, 0.45)),
+                url("images/image7.jpg") center/cover no-repeat;
+    background-attachment: fixed;
+    color: #34443e;
 }
 
 /* Centre the admin dashboard content without affecting the navigation bar */

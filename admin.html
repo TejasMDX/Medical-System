@@ -5,15 +5,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="admin-page">
 
     <nav>
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
 
-        <a href="login.html" class="login-button">Login</a>
+        <a id="loginButton" href="login.html" class="login-button">Login</a>
     </nav>
+
+    <p id="access_admin">Log in as an admin to access this page.</p>
+
+    <div hidden id="admin_dashboard">
 
     <h1>Admin Dashboard</h1>
 
@@ -151,6 +155,7 @@
 
     <button onclick="deleteDoctor()">Delete Doctor</button>
 
+    </div>
     </div>
 
     <script src="import.js"></script>
@@ -459,6 +464,17 @@
         };
 
     </script>
+
+    <script>
+    const userRole = sessionStorage.getItem("userRole")
+
+    if (userRole === "admin") {
+        document.getElementById("admin_dashboard").hidden = false
+        document.getElementById("access_admin").hidden = true
+    }
+    </script>
+
+<script src="logout.js"></script>
 
 </body>
 </html>
