@@ -109,26 +109,20 @@
         };
 
 
-        // Load all patient records from the database.
         function choosePatients(db) {
 
-            // Start a transaction to read patient records.
             const transaction = db.transaction(["Patients"], "readonly");
 
-            // Access the Patients object store.
             const patientsStore = transaction.objectStore("Patients");
 
-            // Get all the patient records.
             const request = patientsStore.getAll();
 
             request.onsuccess = function() {
 
                 const patients = request.result;
 
-                // Access the patient dropdown.
                 const patientDropdown = document.getElementById("patient");
 
-                // Add patients to the dropdown.
                 patients.forEach(function(patient) {
 
                     const option = document.createElement("option");
@@ -144,20 +138,7 @@
 
         }
 
-            // Add medicines to the dropdown
-            medicines.forEach(function(medicine) {
-                const option = document.createElement("option");
 
-                option.value = medicine.id;
-                option.textContent = medicine.Drug;
-
-                document.getElementById("medicine").appendChild(option);
-            });
-
-
-        loadData().catch(function(error) {
-            console.log("Could not load the JSON files.", error);
-        });
 
         function showAppointments(db) {
 
@@ -376,7 +357,7 @@
 
     <script>
     
-    //sessionStorage.setItem("userRole", "doctor");
+    sessionStorage.setItem("userRole", "doctor");
     
     const userRole = sessionStorage.getItem("userRole")
 
