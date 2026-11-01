@@ -10,14 +10,14 @@
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
-        <a href="login.html" class="login-button">Login</a>
+        <a id = "loginButton" href="login.html" class="login-button">Login</a>
     </nav>
 
     <div>
         <p id="access_doctor">Log in as a doctor to access this page.</p>
     </div>
 
-    <div id="doctor_dashboard">
+    <div hidden id="doctor_dashboard">
         <h1>Doctor Dashboard</h1>
 
     <img src="images/image8.png">
@@ -64,6 +64,12 @@
     <script src="import.js"></script>
     
     <script>
+        const userRole = sessionStorage.getItem("userRole")
+
+        if (userRole === "doctor" || userRole === "admin") {
+            document.getElementById("doctor_dashboard").hidden = false
+            document.getElementById("access_doctor").hidden = true
+        }
 
         // Open the existing CarePoint database.
         const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
@@ -126,5 +132,6 @@
         });
     </script>
 
+<script src="logout.js"></script>
 </body>
 </html>

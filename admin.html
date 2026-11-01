@@ -12,8 +12,14 @@
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
 
-        <a href="login.html" class="login-button">Login</a>
+        <a id = "loginButton" href="login.html" class="login-button">Login</a>
     </nav>
+
+    <div>
+        <p id="access_admin">Log in as an admin to access this portal.</p>
+    </div>
+
+    <div hidden id = "admin_dashboard">
 
     <h1>Admin Dashboard</h1>
 
@@ -152,10 +158,18 @@
     <button onclick="deleteDoctor()">Delete Doctor</button>
 
     </div>
+    </div>
 
     <script src="import.js"></script>
 
     <script>
+
+        const userRole = sessionStorage.getItem("userRole")
+
+        if (userRole === "admin") {
+            document.getElementById("admin_dashboard").hidden = false
+            document.getElementById("access_admin").hidden = true
+        }
 
         function showPatientSection() {
 
@@ -460,5 +474,6 @@
 
     </script>
 
+<script src="logout.js"></script>
 </body>
 </html>

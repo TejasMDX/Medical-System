@@ -12,14 +12,14 @@
         <a href="about.html">About</a>
         <a href="contact.html">Contact</a>
 
-        <a href="login.html" class="login-button">Login</a>
+        <a id = "loginButton" href="login.html" class="login-button">Login</a>
     </nav>
 
     <div>
         <p id="access_patient">Log in as a patient to access this portal.</p>
     </div>
 
-    <div id="patient_dashboard">
+    <div hidden id="patient_dashboard">
             <h1>Patient Dashboard</h1>
 
 
@@ -64,6 +64,13 @@
     </div>
 
     <script>
+        const userRole = sessionStorage.getItem("userRole")
+
+        if (userRole === "patient" || userRole === "admin") {
+            document.getElementById("patient_dashboard").hidden = false
+            document.getElementById("access_patient").hidden = true
+        }
+
     // Fetch the doctors from the JSON file
     fetch("json/doctors.json")
         // Convert the JSON file into JavaScript data
@@ -87,5 +94,6 @@
         });
     </script>
 
+<script src="logout.js"></script>
 </body>
 </html>

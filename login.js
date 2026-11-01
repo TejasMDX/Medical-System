@@ -263,6 +263,7 @@ document.getElementById('patientLoginForm').addEventListener(
                 // Save the patient's login session
                 sessionStorage.setItem('patientLoggedIn', 'true');
                 sessionStorage.setItem('patientId', account.record.id);
+                sessionStorage.setItem('userRole', "patient")
 
                 // Redirect to the patient dashboard
                 window.location.href = 'patient.html';
@@ -273,6 +274,7 @@ document.getElementById('patientLoginForm').addEventListener(
                 // Save the doctor's login session
                 sessionStorage.setItem('doctorLoggedIn', 'true');
                 sessionStorage.setItem('doctorId', account.record.id);
+                sessionStorage.setItem('userRole', "doctor")
 
                 // Redirect to the doctor dashboard
                 window.location.href = 'doctor.html';

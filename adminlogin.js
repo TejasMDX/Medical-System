@@ -57,6 +57,7 @@ function setupAdminLogin() {
             if (admin && admin.password === password) {
 
                 sessionStorage.setItem('adminLoggedIn', 'true');
+                sessionStorage.setItem('userRole', 'admin')
 
                 window.location.href = 'admin.html';
 
