@@ -57,6 +57,8 @@
 
     <p>View your prescribed medications and instructions below.</p>
 
+    <div id="medications"></div>
+
     <h2>My Medical History</h2>
 
     <p>Your medical history and doctor's notes will appear here.</p>
@@ -67,6 +69,7 @@
     <script>
 
         let db;
+        let doctors = [];
 
         // Open the existing CarePoint database.
         const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
@@ -74,7 +77,13 @@
         doctorDBRequest.onsuccess = function(event) {
 
             // Access the database.
-           db = event.target.result;
+            db = event.target.result;
+
+            loadDoctors();
+
+        };
+
+        function loadDoctors() {
 
             // Start a transaction to read doctor records.
             const transaction = db.transaction(["Doctor"], "readonly");
@@ -87,26 +96,34 @@
 
             request.onsuccess = function() {
 
-                const doctors = request.result;
+                doctors = request.result;
 
-                // Access the doctor dropdown.
-                const doctorDropdown = document.getElementById("doctor");
+                displayDoctors(doctors);
 
-                // Add doctors to the dropdown.
-                doctors.forEach(function(doctor) {
-
-                    const option = document.createElement("option");
-
-                    option.value = doctor.id;
-                    option.textContent = "Dr. " + doctor.first_name + " " + doctor.last_name;
-
-                    doctorDropdown.appendChild(option);
-
-                });
+                show_medications(db);
 
             };
 
-        };
+        }
+
+        function displayDoctors(doctors) {
+
+            // Access the doctor dropdown.
+            const doctorDropdown = document.getElementById("doctor");
+
+            // Add doctors to the dropdown.
+            doctors.forEach(function(doctor) {
+
+                const option = document.createElement("option");
+
+                option.value = doctor.id;
+                option.textContent = "Dr. " + doctor.first_name + " " + doctor.last_name;
+
+                doctorDropdown.appendChild(option);
+
+            });
+
+        }
 
         function bookAppointment(){
             let doctorId = document.getElementById("doctor").value;
@@ -171,6 +188,83 @@
 
             return appointmentID;
         }
+
+        function show_medications(db){
+
+            const patientID = 1
+
+            // Start a transaction to read patient records.
+            const transaction = db.transaction(["Prescription"], "readonly");
+
+            // Access the Appointment object store.
+            const prescriptionsStore = transaction.objectStore("Prescription");
+
+            // Get all the patient records.
+            const prescriptionsRequest = prescriptionsStore.getAll();
+
+            transaction.oncomplete = function() {
+
+                const prescriptions = prescriptionsRequest.result;
+
+                // This creates the table headings for the patient records.
+                let html = `<table border="1">
+                <tr>
+                    <th>Date</th>
+                    <th>Doctor</th>
+                    <th>Medicine ID</th>
+                    <th>Notes</th>
+                </tr>`;
+
+                prescriptions.forEach(a => {
+                    if (Number(a.patient_id) === Number(patientID)) {
+                    html += `<tr>
+                    <td>${a.date}</td>
+                    <td>${getDoctorName(doctors, a.doctor_id)}</td>
+                    <td>${a.medicine_id}</td>
+                    <td>${a.notes}</td>
+                </tr>`;
+                    }});
+
+                // This closes the patient table.
+                html += `</table>`;
+
+                // This displays the patient table on the page.
+                document.getElementById("medications").innerHTML = html;
+            };
+        };
+
+        function getDoctorName(doctors, doctorID){
+            const doctor = doctors.find(d => Number(d.id) === Number(doctorID));
+
+            if (doctor) {
+                return "Dr. " + doctor.first_name + " " + doctor.last_name;
+            }
+        };
+
+        function getDrugName(medicineID){
+            // Start a transaction to read doctor records.
+            const transaction = db.transaction(["Medicine"], "readonly");
+
+            // Access the Doctors object store.
+            const medicineStore = transaction.objectStore("Medicine");
+
+            // Get all the doctor records.
+            const request = medicineStore.getAll();
+
+            let drugName = "Medicine not found";
+
+            for (const medicine of medicines) {
+
+            if (Number(medicine.id) === Number(medicineID)) {
+                drugName = medicine.Drug;
+                break;
+            }
+
+            return drugName
+
+        }
+        };
+        
 
     </script>
 
