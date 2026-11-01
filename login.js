@@ -1,4 +1,3 @@
-
 const DB_NAME = 'CarePointDatabase';
 
 
@@ -296,4 +295,3 @@ document.getElementById('LoginForm').addEventListener(
 
     }
 );
-

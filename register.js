@@ -1,4 +1,3 @@
-
 const DB_NAME = 'CarePointDatabase';
 
 let selectedType = '';

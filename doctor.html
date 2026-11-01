@@ -26,10 +26,8 @@
 
     <h2>My Appointments</h2>
     <p>View your upcoming appointments and patient details here.</p>
-    <div id="appointments"></div>
-    
 
-        <h2>Patient Records</h2>
+    <h2>Patient Records</h2>
 
     <label for="patient">Choose a Patient:</label>
 
@@ -39,35 +37,11 @@
 
     <br><br>
 
-    <button type="button" onclick="viewPatientRecords()">View Patient Records</button>
-
-    <div id="patientRecords"></div>
-
+    <button type="button">View Patient Records</button>
 
     <h2>Medical Notes and Treatments</h2>
 
-    <p>Add medical notes, treatments and prescribe medicine for a patient.</p>
-
-    <h3>Medical Notes</h3>
-
-    <label for="notes">Medical Note:</label>
-    <br>
-
-    <textarea id="notes" rows="4"></textarea>
-
-    <br><br>
-
-    <label for="treatment">Treatment:</label>
-    <br>
-
-    <textarea id="treatment" rows="3"></textarea>
-
-    <br><br>
-
-    <button type="button" onclick="saveNote()">Save Medical Notes</button>
-
-
-    <h3>Prescribe Medicine</h3>
+    <p>Add medical notes and select a medicine for a patient.</p>
 
     <label for="medicine">Medicine Name:</label>
 
@@ -77,40 +51,28 @@
 
     <br><br>
 
-    <label for="instructions">Instructions:</label>
+    <label for="notes">Medical Note:</label>
     <br>
 
-    <textarea id="instructions" rows="3"></textarea>
+    <textarea id="notes" rows="4"></textarea>
 
     <br><br>
 
-    <button type="button" onclick="savePrescription()">Save Prescription</button>
+    <button type="button">Save Note</button>
+    </div>
  
     <script>
-
-        let db
 
         // Open the existing CarePoint database.
         const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
 
         doctorDBRequest.onsuccess = function(event) {
 
-            db = event.target.result
-
-            showAppointments(db);
-
-            choosePatients(db);
-
-            chooseMedicine(db);
-
-        };
-
-
-        // Load all patient records from the database.
-        function choosePatients(db) {
+            // Access the database.
+            const doctorDB = event.target.result;
 
             // Start a transaction to read patient records.
-            const transaction = db.transaction(["Patients"], "readonly");
+            const transaction = doctorDB.transaction(["Patients"], "readonly");
 
             // Access the Patients object store.
             const patientsStore = transaction.objectStore("Patients");
@@ -139,7 +101,12 @@
 
             };
 
-        }
+            transaction.oncomplete = function() {
+                doctorDB.close();
+            };
+
+
+        };
 
             // Add medicines to the dropdown
             medicines.forEach(function(medicine) {
@@ -155,177 +122,6 @@
         loadData().catch(function(error) {
             console.log("Could not load the JSON files.", error);
         });
-
-
-        function showAppointments(db) {
-
-            const doctorID = 1;
-
-
-            // Start a transaction to read patient records.
-            const transaction = db.transaction(["Appointment", "Patients"], "readonly");
-
-            // Access the Appointment object store.
-            const appointmentStore = transaction.objectStore("Appointment");
-            const patientsStore = transaction.objectStore("Patients");
-
-            // Get all the patient records.
-            const appointmentRequest = appointmentStore.getAll();
-            const patientsRequest = patientsStore.getAll();
-
-            transaction.oncomplete = function() {
-
-                const appointments = appointmentRequest.result;
-                const patients = patientsRequest.result;
-
-                // This creates the table headings for the patient records.
-                let html = `<table border="1">
-            <tr>
-                <th>NHS</th>
-                <th>Title</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>DOB</th>
-                <th>Gender</th>
-                <th>Address</th>
-                <th>Email</th>
-                <th>Telephone</th>
-                <th>Date</th>
-                <th>Time</th>
-            </tr>`;
-
-                appointments.forEach(a => {
-                    if (Number(a.doctor_id) === Number(doctorID)) {
-                        const patient = patients.find(p =>
-                    Number(p.id) === Number(a.patient_id)
-                );
-                        html += `<tr>
-                        <td>${patient.NHS}</td>
-                        <td>${patient.Title}</td>
-                        <td>${patient.First}</td>
-                        <td>${patient.Last}</td>
-                        <td>${patient.DOB}</td>
-                        <td>${patient.Gender}</td>
-                        <td>${patient.Address}</td>
-                        <td>${patient.Email}</td>
-                        <td>${patient.Telephone}</td>
-                        <td>${a.date}</td>
-                        <td>${a.time}</td>
-                    </tr>`;
-                    }
-                });
-
-                // This closes the patient table.
-                html += `</table>`;
-
-                // This displays the patient table on the page.
-                document.getElementById("appointments").innerHTML = html;
-            };
-        };
-
-        
-        function chooseMedicine(db) {
-            // Start a transaction to read patient records.
-            const transaction = db.transaction(["Medicine"], "readonly");
-
-            const medicineStore = transaction.objectStore("Medicine");
-
-            const request = medicineStore.getAll();
-
-            request.onsuccess = function() {
-
-                const medicines = request.result;
-
-                // Access the patient dropdown.
-                const medicineDropdown = document.getElementById("medicine");
-
-                // Add patients to the dropdown.
-                medicines.forEach(function(medicine) {
-
-                    const option = document.createElement("option");
-
-                    option.value = medicine.id;
-                    option.textContent =medicine.Drug;
-
-                    medicineDropdown.appendChild(option);
-
-                });
-
-            };
-        };
-
-        function savePrescription(){
-
-            let medicineID = document.getElementById("medicine").value;
-            let patientID = document.getElementById("patient").value;
-            let instructions = document.getElementById("instructions").value;
-
-            if (medicineID === "" || patientID === "" || instructions === "") {
-
-                alert("Please fill in all fields.");
-
-            }
-            else {
-
-                const transaction = db.transaction(["Prescription"], "readwrite");
-
-                // Access the Prescription object store.
-                const prescriptionStore = transaction.objectStore("Prescription");
-
-                // Get all existing prescriptions.
-                const request = prescriptionStore.getAll();
-
-                request.onsuccess = function() {
-
-                    const prescriptions = request.result;
-
-                    const prescriptionID = get_prescription_id(prescriptions);
-
-                    const doctorID = 1;
-
-                    const date = new Date().toISOString().split("T")[0];
-
-                    const prescription = {
-                        prescription_id: prescriptionID,
-                        medicine_id: Number(medicineID),
-                        doctor_id: doctorID,
-                        patient_id: Number(patientID),
-                        notes: instructions,
-                        date: date
-                    };
-
-                    prescriptionStore.add(prescription);
-
-                };
-
-                transaction.oncomplete = function() {
-
-                    alert("Prescription saved.");
-
-                    document.getElementById("medicine").value = "";
-                    document.getElementById("instructions").value = "";
-
-                };
-
-            }
-
-        }
-
-        function get_prescription_id(prescriptions) {
-
-            let prescriptionID = 1;
-
-            prescriptions.forEach(function(prescription) {
-
-                if (Number(prescription.prescription_id) >= prescriptionID) {
-                    prescriptionID = Number(prescription.prescription_id) + 1;
-                }
-
-            });
-
-            return prescriptionID;
-        }
-
     </script>
 
 </body>
