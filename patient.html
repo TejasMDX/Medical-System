@@ -70,6 +70,7 @@
 
         let db;
         let doctors = [];
+        let medicines = [];
 
         // Open the existing CarePoint database.
         const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
@@ -80,6 +81,7 @@
             db = event.target.result;
 
             loadDoctors();
+            loadMedicines();
 
         };
 
@@ -211,7 +213,7 @@
                 <tr>
                     <th>Date</th>
                     <th>Doctor</th>
-                    <th>Medicine ID</th>
+                    <th>Drug</th>
                     <th>Notes</th>
                 </tr>`;
 
@@ -220,7 +222,7 @@
                     html += `<tr>
                     <td>${a.date}</td>
                     <td>${getDoctorName(doctors, a.doctor_id)}</td>
-                    <td>${a.medicine_id}</td>
+                    <td>${getDrugName(medicines, a.medicine_id)}</td>
                     <td>${a.notes}</td>
                 </tr>`;
                     }});
@@ -241,28 +243,29 @@
             }
         };
 
-        function getDrugName(medicineID){
-            // Start a transaction to read doctor records.
+        function loadMedicines() {
+
             const transaction = db.transaction(["Medicine"], "readonly");
 
-            // Access the Doctors object store.
             const medicineStore = transaction.objectStore("Medicine");
 
-            // Get all the doctor records.
             const request = medicineStore.getAll();
 
-            let drugName = "Medicine not found";
+            request.onsuccess = function() {
 
-            for (const medicine of medicines) {
+                medicines = request.result;
 
-            if (Number(medicine.id) === Number(medicineID)) {
-                drugName = medicine.Drug;
-                break;
-            }
-
-            return drugName
+            };
 
         }
+
+        function getDrugName(medicines, medicineID){
+
+            const medicine = medicines.find(m => Number(m.id) === Number(medicineID));
+
+            if (medicine) {
+                return medicine.Drug;
+            }
         };
         
 
