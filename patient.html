@@ -63,6 +63,8 @@
 
     <p>Your medical history and doctor's notes will appear here.</p>
 
+    <div id="medicalHistory"></div>
+
     </div>
 
     <script>
@@ -102,6 +104,8 @@
                 displayDoctors(doctors);
 
                 show_medications(db);
+
+                getMedicalHistory();
 
             };
 
@@ -266,12 +270,67 @@
                 return medicine.Drug;
             }
         };
+
+        function getMedicalHistory(){
+
+            const patientID = 1;
+
+            // Start a transaction to read medical history records.
+            const transaction = db.transaction(["MedicalHistory"], "readonly");
+
+            // Access the MedicalHistory object store.
+            const medicalHistoryStore = transaction.objectStore("MedicalHistory");
+
+            // Get all medical history records.
+            const medicalHistoryRequest = medicalHistoryStore.getAll();
+
+            transaction.oncomplete = function() {
+
+                const medicalRecords = medicalHistoryRequest.result;
+
+                // This creates the table headings.
+                let html = `<table border="1">
+                    <tr>
+                        <th>Date</th>
+                        <th>Doctor</th>
+                        <th>Medical Notes</th>
+                        <th>Treatment</th>
+                    </tr>`;
+
+                medicalRecords.forEach(a => {
+
+                    if (Number(a.patient_id) === Number(patientID)) {
+
+                        html += `<tr>
+                            <td>${a.date}</td>
+                            <td>${getDoctorName(doctors, a.doctor_id)}</td>
+                            <td>${a.notes}</td>
+                            <td>${a.treatment}</td>
+                        </tr>`;
+
+                    }
+
+                });
+
+                // This closes the table.
+                html += `</table>`;
+
+                // This displays the medical history table.
+                document.getElementById("medicalHistory").innerHTML = html;
+
+            };
+
+        };
+
+
+
+
         
 
     </script>
 
     <script>
-        //sessionStorage.setItem("userRole", "patient")
+        sessionStorage.setItem("userRole", "patient")
 
         const userRole = sessionStorage.getItem("userRole")
 

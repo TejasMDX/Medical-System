@@ -65,7 +65,7 @@
 
     <br><br>
 
-    <button type="button" onclick="saveNote()">Save Medical Notes</button>
+    <button type="button" onclick="saveMedicalNotes()">Save Medical Notes</button>
 
 
     <h3>Prescribe Medicine</h3>
@@ -350,6 +350,78 @@
                 }
 
             };
+
+        }
+
+        function saveMedicalNotes(){
+
+            let patientID = document.getElementById("patient").value;
+            let notes = document.getElementById("notes").value;
+            let treatment = document.getElementById("treatment").value;
+
+            if (patientID === "" || notes === "" || treatment === "") {
+
+                alert("Please fill in all fields.");
+
+            }
+            else {
+
+                const transaction = db.transaction(["MedicalHistory"], "readwrite");
+
+                // Access the MedicalHistory object store.
+                const medicalHistoryStore = transaction.objectStore("MedicalHistory");
+
+                // Get all existing medical history records.
+                const request = medicalHistoryStore.getAll();
+
+                request.onsuccess = function() {
+
+                    const medicalRecords = request.result;
+
+                    const historyID = get_medical_history_id(medicalRecords);
+
+                    const doctorID = 1;
+
+                    const date = new Date().toISOString().split("T")[0];
+
+                    const medicalHistory = {
+                        history_id: historyID,
+                        patient_id: Number(patientID),
+                        doctor_id: doctorID,
+                        notes: notes,
+                        treatment: treatment,
+                        date: date
+                    };
+
+                    medicalHistoryStore.add(medicalHistory);
+
+                };
+
+                transaction.oncomplete = function() {
+
+                    alert("Medical notes saved.");
+
+                    document.getElementById("notes").value = "";
+                    document.getElementById("treatment").value = "";
+
+                };
+
+            }
+
+        function get_medical_history_id(medicalRecords) {
+
+            let historyID = 1;
+
+            medicalRecords.forEach(function(record) {
+
+                if (Number(record.history_id) >= historyID) {
+                    historyID = Number(record.history_id) + 1;
+                }
+
+            });
+
+            return historyID;
+        }
 
         }
 
