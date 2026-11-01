@@ -120,6 +120,9 @@ async function start_db() {
         db.createObjectStore("Doctor", { keyPath: "id" });
         db.createObjectStore("Medicine", { keyPath: "id" });
         db.createObjectStore("Patients", { keyPath: "id" });
+        db.createObjectStore("Appointment", {keyPath: "appointment_id"});
+        db.createObjectStore("Prescription", {keyPath: "prescription_id"});
+
     };
 
     request.onsuccess = function(event) {

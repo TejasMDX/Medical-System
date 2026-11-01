@@ -89,7 +89,7 @@ async function verifyPassword(password, storedHash, storedSalt) {
 
 
 // Handle login for Doctors and Patients
-document.getElementById('patientLoginForm').addEventListener(
+document.getElementById('LoginForm').addEventListener(
     'submit',
     async function(event) {
 
@@ -254,6 +254,7 @@ document.getElementById('patientLoginForm').addEventListener(
 
             const account = validAccounts[0];
 
+
             database.close();
 
 
@@ -297,3 +298,4 @@ document.getElementById('patientLoginForm').addEventListener(
 
     }
 );
+
