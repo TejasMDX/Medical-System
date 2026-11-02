@@ -1,3 +1,4 @@
+
 const DB_NAME = 'CarePointDatabase';
 
 let selectedType = '';
@@ -119,6 +120,17 @@ function normaliseText(value) {
 }
 
 
+// Normalise email addresses
+function normaliseEmail(email) {
+
+    return String(email ?? '')
+        .normalize('NFC')
+        .trim()
+        .toLowerCase();
+
+}
+
+
 // Normalise phone numbers
 function normalisePhone(value) {
 
@@ -146,6 +158,177 @@ function normaliseDate(value) {
             match[2].padStart(2, '0') + '-' +
             match[1].padStart(2, '0');
 
+    }
+
+    return '';
+
+}
+
+
+// Sanitise text inputs
+function sanitiseText(value) {
+
+    return String(value ?? '')
+        .normalize('NFC')
+        .trim()
+        .replace(/\s+/g, ' ');
+
+}
+
+
+// Check for unwanted control characters
+function containsControlCharacters(value) {
+
+    return /[\u0000-\u001F\u007F]/.test(String(value ?? ''));
+
+}
+
+
+// Validate names
+function validName(value) {
+
+    return /^[\p{L}\p{M}]+(?:[ .'-][\p{L}\p{M}]+)*$/u.test(value);
+
+}
+
+
+// Validate registration information
+function validateDetails(details, rawDetails) {
+
+    // Check for unwanted control characters
+    if (Object.values(rawDetails).some(containsControlCharacters)) {
+
+        return 'Invalid characters detected in your information.';
+
+    }
+
+    // Validate first and last names
+    if (
+        details.first_name.length > 60 ||
+        details.last_name.length > 60 ||
+        !validName(details.first_name) ||
+        !validName(details.last_name)
+    ) {
+
+        return 'Please enter valid first and last names.';
+
+    }
+
+    // Validate email
+    if (
+        details.email.length > 254 ||
+        !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(details.email)
+    ) {
+
+        return 'Please enter a valid email address.';
+
+    }
+
+    // Validate gender
+    if (
+        !/^[\p{L}\p{M}]+(?:[ -][\p{L}\p{M}]+)*$/u.test(details.gender) ||
+        details.gender.length > 30
+    ) {
+
+        return 'Please enter a valid gender.';
+
+    }
+
+    // Validate address
+    if (
+        details.address.length < 3 ||
+        details.address.length > 100 ||
+        /[<>]/.test(details.address)
+    ) {
+
+        return 'Please enter a valid address.';
+
+    }
+
+    // Validate telephone number
+    const phoneDigits = normalisePhone(details.phone_number);
+
+    if (
+        !/^\+?[0-9\s().-]+$/.test(details.phone_number) ||
+        phoneDigits.length < 7 ||
+        phoneDigits.length > 15
+    ) {
+
+        return 'Please enter a valid telephone number.';
+
+    }
+
+    // Validate patient date of birth
+    if (selectedType === 'Patient') {
+
+        const dob = normaliseDate(details.date_of_birth);
+
+        if (!dob) {
+
+            return 'Please enter a valid date of birth.';
+
+        }
+
+        const [year, month, day] = dob.split('-').map(Number);
+
+        const date = new Date(year, month - 1, day);
+
+        // Check that the date actually exists
+        if (
+            date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day
+        ) {
+
+            return 'Please enter a valid date of birth.';
+
+        }
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (date > today) {
+
+            return 'Date of birth cannot be in the future.';
+
+        }
+
+    }
+
+    return '';
+
+}
+
+
+// Validate password strength
+function validatePassword(password) {
+
+    if (password.length < 8) {
+        return 'Password must contain at least 8 characters.';
+    }
+
+    if (password.length > 128) {
+        return 'Password cannot exceed 128 characters.';
+    }
+
+    if (!/[A-Z]/.test(password)) {
+        return 'Password must contain at least one uppercase letter.';
+    }
+
+    if (!/[a-z]/.test(password)) {
+        return 'Password must contain at least one lowercase letter.';
+    }
+
+    if (!/[0-9]/.test(password)) {
+        return 'Password must contain at least one number.';
+    }
+
+    if (!/[^A-Za-z0-9\s]/.test(password)) {
+        return 'Password must contain at least one special character.';
+    }
+
+    if (containsControlCharacters(password)) {
+        return 'Password contains invalid characters.';
     }
 
     return '';
@@ -190,7 +373,7 @@ function detailsMatch(record, details) {
 
         normaliseText(lastName) === normaliseText(details.last_name) &&
 
-        normaliseText(email) === normaliseText(details.email) &&
+        normaliseEmail(email) === normaliseEmail(details.email) &&
 
         normaliseText(gender) === normaliseText(details.gender) &&
 
@@ -265,24 +448,77 @@ document.getElementById('registerForm').addEventListener(
 
         message.textContent = '';
 
-        const details = {
+        const detailsForm = document.getElementById('registerForm');
 
-            first_name: document.getElementById('first_name').value.trim(),
+        if (!detailsForm.checkValidity()) {
 
-            last_name: document.getElementById('last_name').value.trim(),
+            detailsForm.reportValidity();
+            return;
 
-            email: document.getElementById('email').value.trim(),
+        }
 
-            gender: document.getElementById('gender').value.trim(),
 
-            address: document.getElementById('address').value.trim(),
+        // Collect the original user inputs
+        const rawDetails = {
 
-            phone_number: document.getElementById('phone_number').value.trim(),
+            first_name: document.getElementById('first_name').value,
 
-            date_of_birth:
-                document.getElementById('date_of_birth').value
+            last_name: document.getElementById('last_name').value,
+
+            email: document.getElementById('email').value,
+
+            gender: document.getElementById('gender').value,
+
+            address: document.getElementById('address').value,
+
+            phone_number: document.getElementById('phone_number').value,
+
+            date_of_birth: document.getElementById('date_of_birth').value
 
         };
+
+
+        // Sanitise the information
+        const details = {
+
+            first_name: sanitiseText(rawDetails.first_name),
+
+            last_name: sanitiseText(rawDetails.last_name),
+
+            email: normaliseEmail(rawDetails.email),
+
+            gender: sanitiseText(rawDetails.gender),
+
+            address: sanitiseText(rawDetails.address),
+
+            phone_number: sanitiseText(rawDetails.phone_number),
+
+            date_of_birth: rawDetails.date_of_birth.trim()
+
+        };
+
+
+        // Validate email using the HTML input
+        const emailInput = document.getElementById('email');
+
+        if (!emailInput.checkValidity()) {
+
+            message.textContent = 'Please enter a valid email address.';
+            return;
+
+        }
+
+
+        // Validate personal information
+        const detailsError = validateDetails(details, rawDetails);
+
+        if (detailsError) {
+
+            message.textContent = detailsError;
+            return;
+
+        }
+
 
         const password = document.getElementById('password').value;
 
@@ -290,19 +526,21 @@ document.getElementById('registerForm').addEventListener(
             document.getElementById('confirm_password').value;
 
 
-        // Check the passwords
-        if (password !== confirmPassword) {
+        // Check password strength
+        const passwordError = validatePassword(password);
 
-            message.textContent = 'Passwords do not match.';
+        if (passwordError) {
+
+            message.textContent = passwordError;
             return;
 
         }
 
-        if (password.length < 8) {
 
-            message.textContent =
-                'Password must contain at least 8 characters.';
+        // Check the passwords match
+        if (password !== confirmPassword) {
 
+            message.textContent = 'Passwords do not match.';
             return;
 
         }
@@ -338,6 +576,27 @@ document.getElementById('registerForm').addEventListener(
             request.onsuccess = function() {
 
                 const records = request.result;
+
+                // Check whether the email already exists
+                const emailMatches = records.filter(function(record) {
+
+                    const storedEmail = selectedType === 'Doctor'
+                        ? record.email
+                        : record.Email;
+
+                    return normaliseEmail(storedEmail) === details.email;
+
+                });
+
+                if (emailMatches.length > 1) {
+
+                    resultMessage =
+                        'Multiple records use this email. Please contact the clinic.';
+
+                    return;
+
+                }
+
 
                 // Find the matching record
                 const matchingRecords = records.filter(function(record) {

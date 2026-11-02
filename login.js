@@ -1,3 +1,4 @@
+
 const DB_NAME = 'CarePointDatabase';
 
 
@@ -94,8 +95,12 @@ document.getElementById('LoginForm').addEventListener(
 
         event.preventDefault();
 
-        const email = document.getElementById('email').value;
+        // Normalise the email address
+        const email = normaliseEmail(
+            document.getElementById('email').value
+        );
 
+        // Keep the password unchanged
         const password = document.getElementById('password').value;
 
         const message = document.getElementById('loginMessage');
@@ -153,7 +158,7 @@ document.getElementById('LoginForm').addEventListener(
             // Search the Patients object store
             patients.forEach(function(patient) {
 
-                if (normaliseEmail(patient.Email) === normaliseEmail(email)) {
+                if (normaliseEmail(patient.Email) === email) {
 
                     matchingAccounts.push({
                         type: 'Patient',
@@ -167,7 +172,7 @@ document.getElementById('LoginForm').addEventListener(
             // Search the Doctor object store
             doctors.forEach(function(doctor) {
 
-                if (normaliseEmail(doctor.email) === normaliseEmail(email)) {
+                if (normaliseEmail(doctor.email) === email) {
 
                     matchingAccounts.push({
                         type: 'Doctor',
