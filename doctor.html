@@ -92,6 +92,7 @@
     <script>
 
         let db
+        const currentDoctorId = sessionStorage.getItem("doctorId");
 
         // Open the existing CarePoint database.
         const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
@@ -142,7 +143,6 @@
 
         function showAppointments(db) {
 
-            const doctorID = 1;
 
             // Start a transaction to read appointment and patient records.
             const transaction = db.transaction(["Appointment", "Patients"], "readonly");
@@ -171,7 +171,7 @@
 
                 appointments.forEach(a => {
 
-                    if (Number(a.doctor_id) === Number(doctorID)) {
+                    if (Number(a.doctor_id) === Number(currentDoctorId)) {
 
                         const patient = patients.find(p =>
                             Number(p.id) === Number(a.patient_id)
@@ -259,14 +259,13 @@
 
                     const prescriptionID = get_prescription_id(prescriptions);
 
-                    const doctorID = 1;
 
                     const date = new Date().toISOString().split("T")[0];
 
                     const prescription = {
                         prescription_id: prescriptionID,
                         medicine_id: Number(medicineID),
-                        doctor_id: doctorID,
+                        doctor_id: Number(currentDoctorId),
                         patient_id: Number(patientID),
                         notes: instructions,
                         date: date
@@ -380,14 +379,12 @@
 
                     const historyID = get_medical_history_id(medicalRecords);
 
-                    const doctorID = 1;
-
                     const date = new Date().toISOString().split("T")[0];
 
                     const medicalHistory = {
                         history_id: historyID,
                         patient_id: Number(patientID),
-                        doctor_id: doctorID,
+                        doctor_id: Number(currentDoctorId),
                         notes: notes,
                         treatment: treatment,
                         date: date
@@ -428,8 +425,6 @@
     </script>
 
     <script>
-    
-    sessionStorage.setItem("userRole", "doctor");
     
     const userRole = sessionStorage.getItem("userRole")
 

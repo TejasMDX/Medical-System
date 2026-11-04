@@ -72,6 +72,7 @@
         let db;
         let doctors = [];
         let medicines = [];
+        const currentUserId = sessionStorage.getItem("patientId");
 
         // Open the existing CarePoint database.
         const doctorDBRequest = indexedDB.open("CarePointDatabase", 1);
@@ -156,12 +157,10 @@
 
                     const appointmentID = get_appointment_id(appointments);
 
-                    const patientID = 1
-
                     const appointment = {
                     appointment_id: appointmentID,
                     doctor_id: doctorId,
-                    patient_id: patientID,
+                    patient_id: currentUserId,
                     date: date,
                     time: time
                 };
@@ -196,7 +195,6 @@
 
         function show_medications(db){
 
-            const patientID = 1
 
             // Start a transaction to read patient records.
             const transaction = db.transaction(["Prescription"], "readonly");
@@ -221,7 +219,7 @@
                 </tr>`;
 
                 prescriptions.forEach(a => {
-                    if (Number(a.patient_id) === Number(patientID)) {
+                    if (Number(a.patient_id) === Number(currentUserId)) {
                     html += `<tr>
                     <td>${a.date}</td>
                     <td>${getDoctorName(doctors, a.doctor_id)}</td>
@@ -273,7 +271,6 @@
 
         function getMedicalHistory(){
 
-            const patientID = 1;
 
             // Start a transaction to read medical history records.
             const transaction = db.transaction(["MedicalHistory"], "readonly");
@@ -299,7 +296,7 @@
 
                 medicalRecords.forEach(a => {
 
-                    if (Number(a.patient_id) === Number(patientID)) {
+                    if (Number(a.patient_id) === Number(currentUserId)) {
 
                         html += `<tr>
                             <td>${a.date}</td>
@@ -330,14 +327,18 @@
     </script>
 
     <script>
-        sessionStorage.setItem("userRole", "patient")
+        //sessionStorage.setItem("userRole", "patient")
 
         const userRole = sessionStorage.getItem("userRole")
+
+        
+
 
         if (userRole === "patient" || userRole === "admin") {
             document.getElementById("patient_dashboard").hidden = false
             document.getElementById("access_patient").hidden = true
         }
+
     </script>
 
 <script src="logout.js"></script>
