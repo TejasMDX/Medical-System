@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -5,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="register-page">
 
     <!-- Navigation bar -->
     <nav>
@@ -16,101 +17,104 @@
 
     <h1>Register</h1>
 
-    <img src="images/image6.png">
+    <div class="registration-container">
 
-    <!-- Choose account type -->
-    <div id="accountTypeSection">
 
-        <h2>Choose Account Type</h2>
+        <!-- Choose account type -->
+        <div id="accountTypeSection">
 
-        <button type="button" class="account-option" data-type="Patient">
-            Patient
-        </button>
+            <h2>Choose Account Type</h2>
 
-        <button type="button" class="account-option" data-type="Doctor">
-            Doctor
-        </button>
+            <button type="button" class="account-option" data-type="Patient">
+                Patient
+            </button>
 
-    </div>
-
-    <!-- Registration form -->
-    <form id="registerForm" hidden>
-
-        <h2 id="formTitle"></h2>
-
-        <!-- First Name -->
-        <label for="first_name">First Name:</label>
-        <input type="text" id="first_name" required>
-
-        <br><br>
-
-        <!-- Last Name -->
-        <label for="last_name">Last Name:</label>
-        <input type="text" id="last_name" required>
-
-        <br><br>
-
-        <!-- Email -->
-        <label for="email">Email:</label>
-        <input type="email" id="email" required>
-
-        <br><br>
-
-        <!-- Gender -->
-        <label for="gender">Gender:</label>
-        <input type="text" id="gender" required>
-
-        <br><br>
-
-        <!-- Address -->
-        <label for="address">Address:</label>
-        <input type="text" id="address" required>
-
-        <br><br>
-
-        <!-- Phone Number -->
-        <label for="phone_number">Phone Number:</label>
-        <input type="tel" id="phone_number" required>
-
-        <br><br>
-
-        <!-- Date of Birth (Patients only) -->
-        <div id="dobField">
-
-            <label for="date_of_birth">Date of Birth:</label>
-            <input type="date" id="date_of_birth">
-
-            <br><br>
+            <button type="button" class="account-option" data-type="Doctor">
+                Doctor
+            </button>
 
         </div>
 
-        <!-- Password -->
-        <label for="password">Password:</label>
-        <input type="password" id="password" required>
+        <!-- Registration form -->
+        <form id="registerForm" hidden>
 
-        <br><br>
+            <h2 id="formTitle"></h2>
 
-        <!-- Confirm Password -->
-        <label for="confirm_password">Confirm Password:</label>
-        <input type="password" id="confirm_password" required>
+            <!-- First Name -->
+            <label for="first_name">First Name:</label>
+            <input type="text" id="first_name" required>
 
-        <br><br>
+            <br><br>
 
-        <!-- Register button -->
-        <button type="submit">Register Account</button>
+            <!-- Last Name -->
+            <label for="last_name">Last Name:</label>
+            <input type="text" id="last_name" required>
 
-        <button type="button" id="changeAccountType">
-            Change Account Type
-        </button>
+            <br><br>
 
-        <!-- Registration message -->
-        <p id="registerMessage"></p>
+            <!-- Email -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" required>
 
-    </form>
+            <br><br>
 
-    <p>Already have an account?
-        <a href="login.html">Login here</a>
-    </p>
+            <!-- Gender -->
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" required>
+
+            <br><br>
+
+            <!-- Address -->
+            <label for="address">Address:</label>
+            <input type="text" id="address" required>
+
+            <br><br>
+
+            <!-- Phone Number -->
+            <label for="phone_number">Phone Number:</label>
+            <input type="tel" id="phone_number" required>
+
+            <br><br>
+
+            <!-- Date of Birth (Patients only) -->
+            <div id="dobField">
+
+                <label for="date_of_birth">Date of Birth:</label>
+                <input type="date" id="date_of_birth">
+
+                <br><br>
+
+            </div>
+
+            <!-- Password -->
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+
+            <br><br>
+
+            <!-- Confirm Password -->
+            <label for="confirm_password">Confirm Password:</label>
+            <input type="password" id="confirm_password" required>
+
+            <br><br>
+
+            <!-- Register button -->
+            <button type="submit">Register Account</button>
+
+            <button type="button" id="changeAccountType">
+                Change Account Type
+            </button>
+
+            <!-- Registration message -->
+            <p id="registerMessage"></p>
+
+        </form>
+
+        <p>Already have an account?
+            <a href="login.html">Login here</a>
+        </p>
+
+    </div>
 
     <!-- Registration JavaScript -->
     <script src="register.js"></script>
