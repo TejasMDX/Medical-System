@@ -88,6 +88,59 @@
     <button onclick="showAllPatients()">Show Patients</button>
     <div id="output"></div>
 
+    <h2>Update Patient Records</h2>
+
+<p>Update patient information below.</p>
+
+<label for="updatePatientId">Patient ID:</label>
+<input id="updatePatientId" type="text" min="1" required>
+
+<button type="button" onclick="loadPatientForUpdate()">Load Patient</button>
+
+<form id="updatePatientForm" hidden>
+
+    <label for="updateNHS">NHS:</label>
+    <input id="updateNHS" type="text" required>
+    <br>
+
+    <label for="updateTitle">Title:</label>
+    <input id="updateTitle" type="text" required>
+    <br>
+
+    <label for="updateFirst">First Name:</label>
+    <input id="updateFirst" type="text" required>
+    <br>
+
+    <label for="updateLast">Last Name:</label>
+    <input id="updateLast" type="text" required>
+    <br>
+
+    <label for="updateDOB">DOB:</label>
+    <input id="updateDOB" type="text" required>
+    <br>
+
+    <label for="updateGender">Gender:</label>
+    <input id="updateGender" type="text" required>
+    <br>
+
+    <label for="updateAddress">Address:</label>
+    <input id="updateAddress" type="text" required>
+    <br>
+
+    <label for="updateEmail">Email:</label>
+    <input id="updateEmail" type="email" required>
+    <br>
+
+    <label for="updateTelephone">Telephone:</label>
+    <input id="updateTelephone" type="text" required>
+    <br>
+
+    <button type="submit">Update Patient</button>
+
+</form>
+
+<p id="updatePatientMessage"></p>
+
     <h2>Delete Patient Records</h2>
 
     <p>Delete patient information below.</p>
@@ -618,6 +671,127 @@
             }
         };
     }
+
+    // Load an existing patient for updating
+function loadPatientForUpdate() {
+
+    const id = Number(document.getElementById("updatePatientId").value);
+
+    const message = document.getElementById("updatePatientMessage");
+
+    message.textContent = "";
+
+    if (!Number.isInteger(id) || id <= 0) {
+        message.textContent = "Please enter a valid patient ID.";
+        return;
+    }
+
+    const transaction = db.transaction(["Patients"], "readonly");
+
+    const patientsStore = transaction.objectStore("Patients");
+
+    const request = patientsStore.get(id);
+
+    request.onsuccess = function() {
+
+        const patient = request.result;
+
+        if (!patient) {
+            message.textContent = "Patient not found.";
+            return;
+        }
+
+        document.getElementById("updateNHS").value = patient.NHS;
+        document.getElementById("updateTitle").value = patient.Title;
+        document.getElementById("updateFirst").value = patient.First;
+        document.getElementById("updateLast").value = patient.Last;
+        document.getElementById("updateDOB").value = patient.DOB;
+        document.getElementById("updateGender").value = patient.Gender;
+        document.getElementById("updateAddress").value = patient.Address;
+        document.getElementById("updateEmail").value = patient.Email;
+        document.getElementById("updateTelephone").value = patient.Telephone;
+
+        document.getElementById("updatePatientForm").hidden = false;
+
+    };
+
+    request.onerror = function() {
+        message.textContent = "Unable to retrieve patient information.";
+    };
+
+}
+
+
+// Handle patient information updates
+document.getElementById("updatePatientForm").addEventListener(
+    "submit", function(event) {
+
+        event.preventDefault();
+
+        const id = Number(document.getElementById("updatePatientId").value);
+
+        const message = document.getElementById("updatePatientMessage");
+
+        const transaction = db.transaction(["Patients"], "readwrite");
+
+        const patientsStore = transaction.objectStore("Patients");
+
+        const request = patientsStore.get(id);
+
+        let patientUpdated = false;
+
+        request.onsuccess = function() {
+
+            const patient = request.result;
+
+            if (!patient) {
+                message.textContent = "Patient not found.";
+                return;
+            }
+
+            // Update the patient's existing information
+            patient.NHS = document.getElementById("updateNHS").value.trim();
+            patient.Title = document.getElementById("updateTitle").value.trim();
+            patient.First = document.getElementById("updateFirst").value.trim();
+            patient.Last = document.getElementById("updateLast").value.trim();
+            patient.DOB = document.getElementById("updateDOB").value.trim();
+            patient.Gender = document.getElementById("updateGender").value.trim();
+            patient.Address = document.getElementById("updateAddress").value.trim();
+            patient.Email = document.getElementById("updateEmail").value.trim();
+            patient.Telephone = document.getElementById("updateTelephone").value.trim();
+
+            const updateRequest = patientsStore.put(patient);
+
+            updateRequest.onsuccess = function() {
+                patientUpdated = true;
+            };
+
+        };
+
+        transaction.oncomplete = function() {
+
+            if (patientUpdated) {
+
+                message.textContent = "Patient information updated successfully.";
+
+                document.getElementById("updatePatientForm").reset();
+
+                document.getElementById("updatePatientForm").hidden = true;
+
+                document.getElementById("updatePatientId").value = "";
+
+                showAllPatients();
+
+            }
+
+        };
+
+        transaction.onerror = function() {
+            message.textContent = "Unable to update patient information.";
+        };
+
+    }
+);
                 
     </script>
 
