@@ -252,44 +252,7 @@ body > a {
 }
 
 
-/* Login page background image and layout */
-body.login-page {
-    min-height: 100vh;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    background-image: url("images/image6.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-}
 
-/* Login form container */
-.login-container {
-    width: 420px;
-    max-width: 100%;
-    box-sizing: border-box;
-    margin: auto;
-    padding: 30px;
-    background-color: rgba(255, 255, 255, 0.92);
-    border-radius: 12px;
-}
-
-.login-container h1 {
-    margin-top: 0;
-}
-
-.login-container input {
-    max-width: 100%;
-    box-sizing: border-box;
-}
-
-/* Adjust login form padding on smaller screens */
-@media (max-width: 500px) {
-    .login-container {
-        padding: 20px;
-    }
-}
 
 /* Doctor portal background and layout */
 .doctor-page {
@@ -713,4 +676,60 @@ body:has(#patientForm) table {
 body:has(#patientForm) button {
     display: block;
     margin: 10px auto;
+}
+
+/* Registration page background */
+body.register-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+
+    background:
+        linear-gradient(
+            rgba(244, 249, 247, 0.45),
+            rgba(244, 249, 247, 0.45)
+        ),
+        url("images/image6.jpg") center/cover no-repeat;
+
+    background-attachment: fixed;
+}
+/* Registration container with background image */
+
+.registration-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 30px auto;
+    padding: 30px;
+    box-sizing: border-box;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Centre the registration image */
+.registration-container img {
+    display: block;
+    margin: 15px auto;
+}
+
+/* Centre section headings */
+.registration-container h2 {
+    text-align: center;
+    color: #198754;
+}
+
+/* Centre account type buttons */
+#accountTypeSection {
+    text-align: center;
+}
+
+/* Registration form */
+.registration-container form {
+    line-height: 2.5;
+}
+
+/* Centre the login link */
+.registration-container > p {
+    text-align: center;
 }
