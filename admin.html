@@ -27,6 +27,8 @@
 
     <button type="button" onclick="showDoctorSection()">Doctors</button>
 
+    <button type="button" onclick="showAdminSection()">Admins</button>
+
     <div id="patientSection">
 
     <h1>Patients Section</h1>
@@ -156,6 +158,47 @@
     <button onclick="deleteDoctor()">Delete Doctor</button>
 
     </div>
+
+    <div id="adminSection" style="display: none;">
+
+        <h1>Admins Section</h1>
+
+        <h2>Add Admin</h2>
+
+        <p>Add a new admin below.</p>
+
+        <form id="adminForm">
+
+            <label for="adminUsernameInput">Username:</label>
+            <input id="adminUsernameInput" type="text" required>
+            <br>
+
+            <label for="adminPasswordInput">Password:</label>
+            <input id="adminPasswordInput" type="password" required>
+            <br>
+
+            <button type="submit">Add Admin</button>
+
+        </form>
+
+        <h2>Admin Records</h2>
+
+        <p>View registered admin accounts below.</p>
+
+        <button type="button" onclick="showAllAdmins()">Show Admins</button>
+        <div id="adminOutput"></div>
+
+        <h2>Delete Admin</h2>
+
+        <p>Delete an admin account below.</p>
+
+        <label for="deleteAdminUsername">Username:</label>
+        <input id="deleteAdminUsername" type="text" required>
+
+        <button type="button" onclick="deleteAdmin()">Delete Admin</button>
+
+    </div>
+
     </div>
 
     <script src="import.js"></script>
@@ -165,16 +208,24 @@
         function showPatientSection() {
 
             document.getElementById("patientSection").style.display = "block";
-
             document.getElementById("doctorSection").style.display = "none";
+            document.getElementById("adminSection").style.display = "none";
         }
 
 
         function showDoctorSection() {
 
             document.getElementById("patientSection").style.display = "none";
-
             document.getElementById("doctorSection").style.display = "block";
+            document.getElementById("adminSection").style.display = "none";
+        }
+
+
+        function showAdminSection() {
+
+            document.getElementById("patientSection").style.display = "none";
+            document.getElementById("doctorSection").style.display = "none";
+            document.getElementById("adminSection").style.display = "block";
         }
 
 
@@ -463,6 +514,111 @@
             };
         };
 
+        function showAllAdmins() {
+
+            const transaction = db.transaction(["Admin"], "readonly");
+
+            const adminStore = transaction.objectStore("Admin");
+
+            const request = adminStore.getAll();
+
+            request.onsuccess = function() {
+
+                const admins = request.result;
+
+                let html = `<table border="1">
+                    <tr>
+                        <th>Username</th>
+                    </tr>`;
+
+                admins.forEach(a => {
+                    html += `<tr>
+                        <td>${a.username}</td>
+                    </tr>`;
+                });
+
+                html += `</table>`;
+
+                document.getElementById("adminOutput").innerHTML = html;
+            };
+        }
+    
+        function addAdmin() {
+
+            document.getElementById("adminForm").addEventListener("submit", function(event) {
+
+                event.preventDefault();
+
+                const transaction = db.transaction(["Admin"], "readwrite");
+
+                const adminStore = transaction.objectStore("Admin");
+
+                const admin = {
+
+                    username: document.getElementById("adminUsernameInput").value.trim(),
+                    password: document.getElementById("adminPasswordInput").value.trim()
+
+                };
+
+                const addRequest = adminStore.add(admin);
+
+                addRequest.onerror = function() {
+                    alert("Could not add admin. This username may already exist.");
+                };
+
+                transaction.oncomplete = function() {
+
+                    document.getElementById("adminForm").reset();
+
+                    showAllAdmins();
+
+                    alert("Admin added");
+                };
+
+            });
+        }
+
+        addAdmin();
+
+        function deleteAdmin() {
+
+        const username = document.getElementById("deleteAdminUsername").value.trim();
+
+        const transaction = db.transaction(["Admin"], "readwrite");
+
+        const adminStore = transaction.objectStore("Admin");
+
+        let adminFound = false;
+
+        const request = adminStore.get(username);
+
+        request.onsuccess = function() {
+
+            if (request.result) {
+
+                adminFound = true;
+
+                adminStore.delete(username);
+            }
+        };
+
+        transaction.oncomplete = function() {
+
+            document.getElementById("deleteAdminUsername").value = "";
+
+            if (adminFound) {
+
+                showAllAdmins();
+
+                alert("Admin deleted");
+
+            } else {
+
+                alert("Admin not found");
+            }
+        };
+    }
+                
     </script>
 
     <script>
