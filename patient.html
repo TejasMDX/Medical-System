@@ -7,6 +7,7 @@
 
 <body class="patient-page">
 
+    <!-- Navigation bar -->
     <nav>
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -15,20 +16,24 @@
         <a id="loginButton" href="login.html" class="login-button">Login</a>
     </nav>
 
+    <!-- Message shown when the patient is not logged in -->
     <div>
         <p id="access_patient">Log in as a patient to access this portal.</p>
     </div>
 
+    <!-- Patient dashboard -->
     <div hidden id="patient_dashboard">
             <h1>Patient Dashboard</h1>
 
 
     <p>Welcome to your patient account.</p>
 
+    <!-- Display the patient's appointments -->
     <h2>My Appointments</h2>
 
     <p>View your upcoming appointments here.</p>
 
+    <!-- Form for booking an appointment -->
     <h2>Book an Appointment</h2>
 
     <form id="appointmentForm">
@@ -53,12 +58,14 @@
         <button type="button" onclick="bookAppointment()" >Book Appointment</button>
     </form>
 
+    <!-- Display prescribed medicines and instructions -->
     <h2>My Medications</h2>
 
     <p>View your prescribed medications and instructions below.</p>
 
     <div id="medications"></div>
 
+    <!-- Display the patient's medical history -->
     <h2>My Medical History</h2>
 
     <p>Your medical history and doctor's notes will appear here.</p>
@@ -69,9 +76,12 @@
 
     <script>
 
+        // Store the database connection and loaded records.
         let db;
         let doctors = [];
         let medicines = [];
+
+        // Get the ID of the logged-in patient.
         const currentUserId = sessionStorage.getItem("patientId");
 
         // Open the existing CarePoint database.
@@ -82,11 +92,13 @@
             // Access the database.
             db = event.target.result;
 
+            // Load the doctors and medicines.
             loadDoctors();
             loadMedicines();
 
         };
 
+        // Load the doctors from the database.
         function loadDoctors() {
 
             // Start a transaction to read doctor records.
@@ -112,6 +124,7 @@
 
         }
 
+        // Display the available doctors in the dropdown.
         function displayDoctors(doctors) {
 
             // Access the doctor dropdown.
@@ -131,11 +144,15 @@
 
         }
 
+        // Book an appointment for the logged-in patient.
         function bookAppointment(){
+
+            // Get the information entered in the appointment form.
             let doctorId = document.getElementById("doctor").value;
             let date = document.getElementById("date").value;
             let time = document.getElementById("time").value;
 
+            // Check that all three fields have been filled in.
             if (doctorId === "" || date === "" || time === "") {
 
                 alert("Please fill in all three fields.");
@@ -155,8 +172,10 @@
                 request.onsuccess = function() {
                     const appointments = request.result;
 
+                    // Generate a new appointment ID.
                     const appointmentID = get_appointment_id(appointments);
 
+                    // Store the appointment details.
                     const appointment = {
                     appointment_id: appointmentID,
                     doctor_id: doctorId,
@@ -178,6 +197,7 @@
 
             }}
 
+        // Generate the next appointment ID.
         function get_appointment_id(appointments) {
 
             let appointmentID = 1;
@@ -193,6 +213,7 @@
             return appointmentID;
         }
 
+        // Display the medications prescribed to the patient.
         function show_medications(db){
 
 
@@ -219,6 +240,8 @@
                 </tr>`;
 
                 prescriptions.forEach(a => {
+
+                    // Only display prescriptions belonging to this patient.
                     if (Number(a.patient_id) === Number(currentUserId)) {
                     html += `<tr>
                     <td>${a.date}</td>
@@ -236,6 +259,7 @@
             };
         };
 
+        // Find the doctor's name using their ID.
         function getDoctorName(doctors, doctorID){
             const doctor = doctors.find(d => Number(d.id) === Number(doctorID));
 
@@ -244,6 +268,7 @@
             }
         };
 
+        // Load the available medicines from the database.
         function loadMedicines() {
 
             const transaction = db.transaction(["Medicine"], "readonly");
@@ -260,6 +285,7 @@
 
         }
 
+        // Find the medicine name using its ID.
         function getDrugName(medicines, medicineID){
 
             const medicine = medicines.find(m => Number(m.id) === Number(medicineID));
@@ -269,6 +295,7 @@
             }
         };
 
+        // Display the patient's medical history.
         function getMedicalHistory(){
 
 
@@ -296,6 +323,7 @@
 
                 medicalRecords.forEach(a => {
 
+                    // Only display records belonging to this patient.
                     if (Number(a.patient_id) === Number(currentUserId)) {
 
                         html += `<tr>
@@ -322,18 +350,16 @@
 
 
 
-        
+
 
     </script>
 
     <script>
 
-
+        // Get the role of the logged-in user.
         const userRole = sessionStorage.getItem("userRole")
 
-        
-
-
+        // Check whether the user can access the patient dashboard.
         if (userRole === "patient" || userRole === "admin") {
             document.getElementById("patient_dashboard").hidden = false
             document.getElementById("access_patient").hidden = true
@@ -341,7 +367,8 @@
 
     </script>
 
-<script src="logout.js"></script>
+    <!-- Load the logout functionality -->
+    <script src="logout.js"></script>
 
 </body>
 </html>

@@ -16,6 +16,7 @@
         <a id = loginButton href="login.html" class="login-button">Login</a>
     </nav>
 
+    <!-- Text appears to tell the user that they need to log in to access the page -->
     <div>
         <p id="access_doctor">Log in as a doctor to access this page.</p>
     </div>
@@ -28,6 +29,7 @@
 
         <p>Welcome to your doctor account.</p>
 
+        <!-- Display the appointments -->
         <h2>My Appointments</h2>
         <p>View your upcoming appointments and patient details here.</p>
         <div id="appointments"></div>
@@ -92,8 +94,9 @@
     </div>
 
     <script>
-
         let db
+
+        // Get ID of the doctor that logged-in.
         const currentDoctorId = sessionStorage.getItem("doctorId");
 
         // Open the existing CarePoint database.
@@ -101,8 +104,10 @@
 
         doctorDBRequest.onsuccess = function(event) {
 
+            // Get the database connection.
             db = event.target.result
 
+            // Load the dashboard information from the database.
             showAppointments(db);
 
             choosePatients(db);
@@ -114,6 +119,7 @@
         // Load the patients into the dropdown list.
         function choosePatients(db) {
 
+            // Start a read-only transaction to access the Patients store.
             const transaction = db.transaction(["Patients"], "readonly");
 
             const patientsStore = transaction.objectStore("Patients");
@@ -126,6 +132,7 @@
 
                 const patientDropdown = document.getElementById("patient");
 
+                // Add each patient to the dropdown
                 patients.forEach(function(patient) {
 
                     const option = document.createElement("option");
@@ -144,11 +151,13 @@
         // Display the appointments assigned to the logged-in doctor.
         function showAppointments(db) {
 
+            // Access appointments and patient information in read-only mode.
             const transaction = db.transaction(["Appointment", "Patients"], "readonly");
 
             const appointmentStore = transaction.objectStore("Appointment");
             const patientsStore = transaction.objectStore("Patients");
 
+            // Retrieve all appointments and patients.
             const appointmentRequest = appointmentStore.getAll();
             const patientsRequest = patientsStore.getAll();
 
@@ -168,8 +177,10 @@
 
                 appointments.forEach(a => {
 
+                    //Show the appointment assigned to the chosen doctor
                     if (Number(a.doctor_id) === Number(currentDoctorId)) {
 
+                        // Find the patient linked to the appointment
                         const patient = patients.find(p =>
                             Number(p.id) === Number(a.patient_id)
                         );
@@ -189,6 +200,7 @@
 
                 });
 
+                // Display the completed table on the page.
                 html += `</table>`;
 
                 document.getElementById("appointments").innerHTML = html;
@@ -200,6 +212,7 @@
         // Load the available medicines into the dropdown list.
         function chooseMedicine(db) {
 
+            // Start a read-only transaction to access the Medicine store.
             const transaction = db.transaction(["Medicine"], "readonly");
 
             const medicineStore = transaction.objectStore("Medicine");
@@ -212,6 +225,7 @@
 
                 const medicineDropdown = document.getElementById("medicine");
 
+                // Add each medicines to the dropdown
                 medicines.forEach(function(medicine) {
 
                     const option = document.createElement("option");
@@ -229,10 +243,12 @@
         // Save a prescription for the selected patient.
         function savePrescription(){
 
+            // Get the information entered in the presciption form.
             let medicineID = document.getElementById("medicine").value;
             let patientID = document.getElementById("patient").value;
             let instructions = document.getElementById("instructions").value;
 
+            // Warning to fill out the fields.
             if (medicineID === "" || patientID === "" || instructions === "") {
 
                 alert("Please fill in all fields.");
@@ -240,6 +256,7 @@
             }
             else {
 
+                // Start a transaction to save the prescription.
                 const transaction = db.transaction(["Prescription"], "readwrite");
 
                 const prescriptionStore = transaction.objectStore("Prescription");
@@ -250,10 +267,12 @@
 
                     const prescriptions = request.result;
 
+                    // Generate a new ID and get the current date.
                     const prescriptionID = get_prescription_id(prescriptions);
 
                     const date = new Date().toISOString().split("T")[0];
 
+                    // Store the presciption details
                     const prescription = {
                         prescription_id: prescriptionID,
                         medicine_id: Number(medicineID),
@@ -263,6 +282,7 @@
                         date: date
                     };
 
+                    // Add the prescription to the database.
                     prescriptionStore.add(prescription);
 
                 };
@@ -271,6 +291,7 @@
 
                     alert("Prescription saved.");
 
+                    // Clear the form after saving.
                     document.getElementById("medicine").value = "";
                     document.getElementById("instructions").value = "";
 
@@ -285,6 +306,7 @@
 
             let prescriptionID = 1;
 
+            // Check the existing IDs to find the next available one.
             prescriptions.forEach(function(prescription) {
 
                 if (Number(prescription.prescription_id) >= prescriptionID) {
@@ -306,10 +328,12 @@
                 return;
             }
 
+            // Start a read-only transaction to retrieve patient information.
             const transaction = db.transaction(["Patients"], "readonly");
 
             const patientsStore = transaction.objectStore("Patients");
 
+            // Get the selected patient's record from the database.
             const request = patientsStore.get(Number(patientID));
 
             request.onsuccess = function() {
@@ -318,6 +342,7 @@
 
                 if (patient) {
 
+                    // Display the patient's information in a table.
                     let html = `<h3>Patient Details</h3>
                         <table border="1">
                             <tr><th>NHS</th><td>${patient.NHS}</td></tr>
@@ -357,6 +382,7 @@
             }
             else {
 
+                // Start a transaction to save the medical history.
                 const transaction = db.transaction(["MedicalHistory"], "readwrite");
 
                 const medicalHistoryStore = transaction.objectStore("MedicalHistory");
@@ -367,10 +393,12 @@
 
                     const medicalRecords = request.result;
 
+                    // Generate a new ID and get the current date.
                     const historyID = get_medical_history_id(medicalRecords);
 
                     const date = new Date().toISOString().split("T")[0];
 
+                    // Store the medical history details.
                     const medicalHistory = {
                         history_id: historyID,
                         patient_id: Number(patientID),
@@ -380,6 +408,7 @@
                         date: date
                     };
 
+                    // Add the medical history record to the database.
                     medicalHistoryStore.add(medicalHistory);
 
                 };
@@ -388,6 +417,7 @@
 
                     alert("Medical notes saved.");
 
+                    // Clear the form after saving.
                     document.getElementById("notes").value = "";
                     document.getElementById("treatment").value = "";
 
@@ -402,6 +432,7 @@
 
             let historyID = 1;
 
+            // Check the existing IDs to find the next available one.
             medicalRecords.forEach(function(record) {
 
                 if (Number(record.history_id) >= historyID) {
@@ -426,7 +457,7 @@
     }
 
     </script>
-
+    <!-- Load the logout functionality -->
     <script src="logout.js"></script>
 
 </body>
