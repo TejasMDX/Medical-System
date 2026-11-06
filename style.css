@@ -1,5 +1,6 @@
-/* ==================== GENERAL STYLING ==================== */
+/* Style */
 
+/* Default appearance for all pages */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f9f7;
@@ -103,12 +104,13 @@ li {
     margin-bottom: 8px;
 }
 
+/* Links */
 body > a {
     color: #198754;
 }
 
 
-/* ==================== HOME PAGE ==================== */
+/* Home page */
 
 .home-section {
     display: flex;
@@ -138,7 +140,7 @@ body > a {
 }
 
 
-/* ==================== SERVICES SECTION ==================== */
+/* Service */
 
 .services-section {
     display: flex;
@@ -177,7 +179,7 @@ body > a {
 }
 
 
-/* ==================== BOOKING SECTION ==================== */
+/* Booking */
 
 .booking-section {
     display: flex;
@@ -208,7 +210,7 @@ body > a {
 }
 
 
-/* ==================== CONTACT PAGE ==================== */
+/* Contact */
 
 .contact-section {
     display: flex;
@@ -245,7 +247,7 @@ body > a {
 }
 
 
-/* ==================== DOCTOR PORTAL ==================== */
+/* Doctor portal */
 
 .doctor-page {
     min-height: 100vh;
@@ -371,7 +373,7 @@ body > a {
 }
 
 
-/* ==================== PATIENT PORTAL ==================== */
+/* Patient portal */
 
 .patient-page {
     min-height: 100vh;
@@ -505,7 +507,7 @@ body > a {
 }
 
 
-/* ==================== LOGIN PAGE ==================== */
+/* Login page */
 
 body.login-page {
     min-height: 100vh;
@@ -623,7 +625,7 @@ body.login-page {
 }
 
 
-/* ==================== ADMIN PORTAL ==================== */
+/* Admin portal */
 
 .admin-page {
     min-height: 100vh;
@@ -688,7 +690,7 @@ body:has(#patientForm) button {
 }
 
 
-/* ==================== REGISTRATION PAGE ==================== */
+/* Registration */
 
 body.register-page {
     min-height: 100vh;
@@ -749,7 +751,7 @@ body.register-page {
 
 
 
-/* ==================== ABOUT PAGE ==================== */
+/* About page */
 
 .about-container {
     display: flex;
