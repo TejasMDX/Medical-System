@@ -3,6 +3,7 @@
 <head>
 <title> Patient Portal </title>
 <link rel="stylesheet" href="style.css">
+<script src="encryption.js"></script>
 </head>
 
 <body class="patient-page">
@@ -24,7 +25,6 @@
     <!-- Patient dashboard -->
     <div hidden id="patient_dashboard">
             <h1>Patient Dashboard</h1>
-
 
     <p>Welcome to your patient account.</p>
 
@@ -168,7 +168,6 @@
                 // Get all existing appointment
                 const request = appointmentStore.getAll();
 
-
                 request.onsuccess = function() {
                     const appointments = request.result;
 
@@ -216,7 +215,6 @@
         // Display the medications prescribed to the patient.
         function show_medications(db){
 
-
             // Start a transaction to read patient records.
             const transaction = db.transaction(["Prescription"], "readonly");
 
@@ -226,7 +224,7 @@
             // Get all the patient records.
             const prescriptionsRequest = prescriptionsStore.getAll();
 
-            transaction.oncomplete = function() {
+            transaction.oncomplete = async function() {
 
                 const prescriptions = prescriptionsRequest.result;
 
@@ -239,24 +237,45 @@
                     <th>Notes</th>
                 </tr>`;
 
-                prescriptions.forEach(a => {
+                for (const a of prescriptions) {
 
                     // Only display prescriptions belonging to this patient.
                     if (Number(a.patient_id) === Number(currentUserId)) {
-                    html += `<tr>
-                    <td>${a.date}</td>
-                    <td>${getDoctorName(doctors, a.doctor_id)}</td>
-                    <td>${getDrugName(medicines, a.medicine_id)}</td>
-                    <td>${a.notes}</td>
-                </tr>`;
-                    }});
+
+                        let decryptedNotes;
+
+                        try {
+
+                            // Decrypt the stored prescription instructions.
+                            decryptedNotes = await decryptText(a.notes);
+
+                        }
+                        catch (error) {
+
+                            console.error("Prescription decryption error:", error);
+                            decryptedNotes = "Unable to decrypt instructions.";
+
+                        }
+
+                        html += `<tr>
+                            <td>${a.date}</td>
+                            <td>${getDoctorName(doctors, a.doctor_id)}</td>
+                            <td>${getDrugName(medicines, a.medicine_id)}</td>
+                            <td>${decryptedNotes}</td>
+                        </tr>`;
+
+                    }
+
+                }
 
                 // This closes the patient table.
                 html += `</table>`;
 
                 // This displays the patient table on the page.
                 document.getElementById("medications").innerHTML = html;
+
             };
+
         };
 
         // Find the doctor's name using their ID.
@@ -281,6 +300,9 @@
 
                 medicines = request.result;
 
+                // Refresh medications after the medicine list loads.
+                show_medications(db);
+
             };
 
         }
@@ -298,7 +320,6 @@
         // Display the patient's medical history.
         function getMedicalHistory(){
 
-
             // Start a transaction to read medical history records.
             const transaction = db.transaction(["MedicalHistory"], "readonly");
 
@@ -308,7 +329,7 @@
             // Get all medical history records.
             const medicalHistoryRequest = medicalHistoryStore.getAll();
 
-            transaction.oncomplete = function() {
+            transaction.oncomplete = async function() {
 
                 const medicalRecords = medicalHistoryRequest.result;
 
@@ -321,21 +342,40 @@
                         <th>Treatment</th>
                     </tr>`;
 
-                medicalRecords.forEach(a => {
+                for (const a of medicalRecords) {
 
                     // Only display records belonging to this patient.
                     if (Number(a.patient_id) === Number(currentUserId)) {
 
+                        let decryptedNotes;
+                        let decryptedTreatment;
+
+                        try {
+
+                            // Decrypt the stored medical notes and treatment.
+                            decryptedNotes = await decryptText(a.notes);
+                            decryptedTreatment = await decryptText(a.treatment);
+
+                        }
+                        catch (error) {
+
+                            console.error("Medical history decryption error:", error);
+
+                            decryptedNotes = "Unable to decrypt medical notes.";
+                            decryptedTreatment = "Unable to decrypt treatment.";
+
+                        }
+
                         html += `<tr>
                             <td>${a.date}</td>
                             <td>${getDoctorName(doctors, a.doctor_id)}</td>
-                            <td>${a.notes}</td>
-                            <td>${a.treatment}</td>
+                            <td>${decryptedNotes}</td>
+                            <td>${decryptedTreatment}</td>
                         </tr>`;
 
                     }
 
-                });
+                }
 
                 // This closes the table.
                 html += `</table>`;
@@ -346,11 +386,6 @@
             };
 
         };
-
-
-
-
-
 
     </script>
 
