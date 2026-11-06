@@ -1,9 +1,9 @@
-
 <!DOCTYPE html>
 <html>
 <head>
     <title> Admin Portal </title>
     <link rel="stylesheet" href="style.css">
+    <script src="encryption.js"></script>
 </head>
 
 <body class="admin-page">
@@ -268,6 +268,7 @@
             document.getElementById("adminSection").style.display = "none";
         }
 
+        // Display the doctors section and hide the other sections.
         function showDoctorSection() {
 
             document.getElementById("patientSection").style.display = "none";
@@ -275,6 +276,7 @@
             document.getElementById("adminSection").style.display = "none";
         }
 
+        // Display the admins section and hide the other sections.
         function showAdminSection() {
 
             document.getElementById("patientSection").style.display = "none";
@@ -348,7 +350,6 @@
 
                     const patients = request.result;
 
-                    // Find the next available patient ID.
                     let newId = 1;
 
                     patients.forEach(p => {
@@ -371,7 +372,7 @@
                         Telephone: document.getElementById("telephoneInput").value.trim()
                     };
 
-                    const addRequest = patientsStore.add(patient);
+                    patientsStore.add(patient);
 
                 };
 
@@ -420,7 +421,6 @@
 
                 const doctors = request.result;
 
-                // Create a table to display the doctor records.
                 let html = `<table border="1">
                     <tr>
                         <th>ID</th>
@@ -468,7 +468,6 @@
 
                     const doctors = request.result;
 
-                    // Find the next available doctor ID.
                     let newId = 1;
 
                     doctors.forEach(d => {
@@ -488,7 +487,7 @@
                         Telephone: document.getElementById("doctorTelephoneInput").value.trim()
                     };
 
-                    const addRequest = doctorStore.add(doctor);
+                    doctorStore.add(doctor);
 
                 };
 
@@ -521,7 +520,9 @@
 
                 showAllDoctors();
             };
-        };
+        }
+
+        // Original admin functions are replaced by the encrypted versions below.
 
         // Load the selected patient's details so they can be edited.
         function loadPatientForUpdate() {
@@ -644,17 +645,275 @@
 
     </script>
 
+    <!-- Additional AES-256 admin username encryption -->
     <script>
-    // Check whether the logged-in user is an admin.
-    const userRole = sessionStorage.getItem("userRole")
 
-    if (userRole === "admin") {
-        document.getElementById("admin_dashboard").hidden = false
-        document.getElementById("access_admin").hidden = true
-    }
+        // Encrypt an admin username for IndexedDB.
+        async function encryptStoredAdminUsername(username) {
+
+            const encrypted = await encryptText(username);
+
+            return "ENC:" + JSON.stringify(encrypted);
+        }
+
+        // Decrypt an admin username from IndexedDB.
+        async function decryptStoredAdminUsername(username) {
+
+            if (typeof username !== "string" || !username.startsWith("ENC:")) {
+                return username;
+            }
+
+            const encrypted = JSON.parse(username.substring(4));
+
+            return await decryptText(encrypted);
+        }
+
+        // Retrieve all admin accounts.
+        function getAllAdminRecords() {
+
+            return new Promise(function(resolve, reject) {
+
+                const transaction = db.transaction(["Admin"], "readonly");
+                const store = transaction.objectStore("Admin");
+                const request = store.getAll();
+
+                request.onsuccess = function() {
+                    resolve(request.result);
+                };
+
+                request.onerror = function() {
+                    reject(request.error);
+                };
+
+            });
+        }
+
+        // Safely display usernames in the admin table.
+        function escapeAdminHTML(value) {
+
+            return String(value).replace(/[&<>"']/g, function(character) {
+
+                const replacements = {
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;"
+                };
+
+                return replacements[character];
+
+            });
+        }
+
+        // Display admin usernames after decrypting them.
+        window.showAllAdmins = async function() {
+
+            try {
+
+                const admins = await getAllAdminRecords();
+
+                let html = `<table border="1">
+                    <tr>
+                        <th>Username</th>
+                    </tr>`;
+
+                for (const admin of admins) {
+
+                    const username =
+                        await decryptStoredAdminUsername(admin.username);
+
+                    html += `<tr>
+                        <td>${escapeAdminHTML(username)}</td>
+                    </tr>`;
+
+                }
+
+                html += `</table>`;
+
+                document.getElementById("adminOutput").innerHTML = html;
+
+            }
+            catch (error) {
+
+                console.error("Unable to display admins:", error);
+
+                alert("Unable to display admin accounts.");
+
+            }
+
+        };
+
+        // Add an admin with an encrypted username.
+        // Capture mode prevents the original plaintext save handler from running.
+        document.getElementById("adminForm").addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+                event.stopImmediatePropagation();
+
+                const username =
+                    document.getElementById("adminUsernameInput").value.trim();
+
+                const password =
+                    document.getElementById("adminPasswordInput").value;
+
+                if (!username || !password) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+
+                try {
+
+                    const admins = await getAllAdminRecords();
+
+                    // Check for an existing username.
+                    for (const admin of admins) {
+
+                        const existingUsername =
+                            await decryptStoredAdminUsername(admin.username);
+
+                        if (existingUsername === username) {
+
+                            alert("This username already exists.");
+                            return;
+
+                        }
+
+                    }
+
+                    // Encrypt only the username.
+                    const encryptedUsername =
+                        await encryptStoredAdminUsername(username);
+
+                    const transaction = db.transaction(["Admin"], "readwrite");
+
+                    const adminStore = transaction.objectStore("Admin");
+
+                    const admin = {
+                        username: encryptedUsername,
+                        password: password
+                    };
+
+                    adminStore.add(admin);
+
+                    transaction.oncomplete = function() {
+
+                        document.getElementById("adminForm").reset();
+
+                        showAllAdmins();
+
+                        alert("Admin added successfully.");
+
+                    };
+
+                    transaction.onerror = function() {
+
+                        alert("Could not add admin.");
+
+                    };
+
+                }
+                catch (error) {
+
+                    console.error("Admin encryption error:", error);
+
+                    alert("Unable to encrypt or save the admin username.");
+
+                }
+
+            },
+            true
+        );
+
+        // Delete an admin using the decrypted username.
+        window.deleteAdmin = async function() {
+
+            const username =
+                document.getElementById("deleteAdminUsername").value.trim();
+
+            if (!username) {
+                alert("Please enter a username.");
+                return;
+            }
+
+            try {
+
+                const admins = await getAllAdminRecords();
+
+                let matchingAdmin = null;
+
+                // Find the stored encrypted username.
+                for (const admin of admins) {
+
+                    const decryptedUsername =
+                        await decryptStoredAdminUsername(admin.username);
+
+                    if (decryptedUsername === username) {
+
+                        matchingAdmin = admin;
+                        break;
+
+                    }
+
+                }
+
+                if (!matchingAdmin) {
+
+                    alert("Admin not found.");
+                    return;
+
+                }
+
+                const transaction = db.transaction(["Admin"], "readwrite");
+
+                const adminStore = transaction.objectStore("Admin");
+
+                // Delete using the encrypted primary key.
+                adminStore.delete(matchingAdmin.username);
+
+                transaction.oncomplete = function() {
+
+                    document.getElementById("deleteAdminUsername").value = "";
+
+                    showAllAdmins();
+
+                    alert("Admin deleted.");
+
+                };
+
+                transaction.onerror = function() {
+
+                    alert("Unable to delete admin.");
+
+                };
+
+            }
+            catch (error) {
+
+                console.error("Admin deletion error:", error);
+
+                alert("Unable to delete admin.");
+
+            }
+
+        };
+
     </script>
 
-    <script src="admin.js"></script>
+    <script>
+
+        // Check whether the logged-in user is an admin.
+        const userRole = sessionStorage.getItem("userRole");
+
+        // Only allow users with the admin role to view the dashboard.
+        if (userRole === "admin") {
+            document.getElementById("admin_dashboard").hidden = false;
+            document.getElementById("access_admin").hidden = true;
+        }
+
+    </script>
 
     <script src="logout.js"></script>
 

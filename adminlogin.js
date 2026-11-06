@@ -1,20 +1,127 @@
-
-// Database name
 const DB_NAME = 'CarePointDatabase';
 
 let db;
 
+// Encrypt a username and store it as a string.
+async function encryptAdminUsername(username) {
 
-// Opens the existing CarePoint database
+    const encrypted = await encryptText(username);
+
+    return "ENC:" + JSON.stringify(encrypted);
+}
+
+// Decrypt a username, including support for older plaintext records.
+async function decryptAdminUsername(username) {
+
+    if (!username.startsWith("ENC:")) {
+        return username;
+    }
+
+    const encrypted = JSON.parse(username.substring(4));
+
+    return await decryptText(encrypted);
+}
+
+// Retrieve all admin accounts.
+function getAllAdmins() {
+
+    return new Promise(function(resolve, reject) {
+
+        const transaction = db.transaction(["Admin"], "readonly");
+        const store = transaction.objectStore("Admin");
+        const request = store.getAll();
+
+        request.onsuccess = function() {
+            resolve(request.result);
+        };
+
+        request.onerror = function() {
+            reject(request.error);
+        };
+
+    });
+}
+
+// Encrypt existing admin usernames.
+async function migrateAdminUsernames() {
+
+    const admins = await getAllAdmins();
+    const recordsToUpdate = [];
+
+    for (const admin of admins) {
+
+        if (!admin.username.startsWith("ENC:")) {
+
+            const encryptedUsername =
+                await encryptAdminUsername(admin.username);
+
+            recordsToUpdate.push({
+                oldUsername: admin.username,
+                newRecord: {
+                    ...admin,
+                    username: encryptedUsername
+                }
+            });
+
+        }
+
+    }
+
+    if (recordsToUpdate.length === 0) {
+        return;
+    }
+
+    return new Promise(function(resolve, reject) {
+
+        const transaction = db.transaction(["Admin"], "readwrite");
+        const store = transaction.objectStore("Admin");
+
+        recordsToUpdate.forEach(function(record) {
+
+            // Remove the old plaintext key.
+            store.delete(record.oldUsername);
+
+            // Save the encrypted username instead.
+            store.add(record.newRecord);
+
+        });
+
+        transaction.oncomplete = resolve;
+
+        transaction.onerror = function() {
+            reject(transaction.error);
+        };
+
+        transaction.onabort = function() {
+            reject(transaction.error);
+        };
+
+    });
+}
+
+// Open the existing CarePoint database.
 function openDatabase() {
 
     const request = indexedDB.open(DB_NAME, 1);
 
-    request.onsuccess = function(event) {
+    request.onsuccess = async function(event) {
 
         db = event.target.result;
 
-        console.log('CarePointDatabase opened successfully.');
+        try {
+
+            // Migrate existing admin usernames.
+            await migrateAdminUsernames();
+
+            console.log("Admin usernames encrypted successfully.");
+            console.log("CarePointDatabase opened successfully.");
+
+        }
+        catch (error) {
+
+            console.error("Username encryption error:", error);
+
+        }
 
     };
 
@@ -25,75 +132,12 @@ function openDatabase() {
     };
 }
 
-
-// Convert Base64 salt back into a Uint8Array
-function fromBase64(value) {
-
-    const binary = atob(value);
-
-    const bytes = new Uint8Array(binary.length);
-
-    for (let i = 0; i < binary.length; i++) {
-
-        bytes[i] = binary.charCodeAt(i);
-
-    }
-
-    return bytes;
-
-}
-
-
-// Verify the entered password against the stored hash
-async function verifyPassword(password, passwordHash, passwordSalt) {
-
-    const salt = fromBase64(passwordSalt);
-
-    const key = await crypto.subtle.importKey(
-        'raw',
-        new TextEncoder().encode(password),
-        'PBKDF2',
-        false,
-        ['deriveBits']
-    );
-
-    const hash = await crypto.subtle.deriveBits(
-        {
-            name: 'PBKDF2',
-            salt: salt,
-            iterations: 150000,
-            hash: 'SHA-256'
-        },
-        key,
-        256
-    );
-
-    const enteredHash = btoa(
-        String.fromCharCode(...new Uint8Array(hash))
-    );
-
-    return enteredHash === passwordHash;
-
-}
-
-
-// Handles successful admin login
-function completeAdminLogin() {
-
-    sessionStorage.setItem('adminLoggedIn', 'true');
-    sessionStorage.setItem('userRole', 'admin');
-
-    window.location.href = 'admin.html';
-
-}
-
-
-// Handles admin login
+// Handles admin login.
 function setupAdminLogin() {
 
     const form = document.getElementById('adminLoginForm');
 
-    form.addEventListener('submit', function(event) {
+    form.addEventListener('submit', async function(event) {
 
         event.preventDefault();
 
@@ -101,9 +145,6 @@ function setupAdminLogin() {
         const password = document.getElementById('password').value;
         const message = document.getElementById('loginMessage');
 
-        message.textContent = '';
-
-        // Ensures the database is available
         if (!db) {
 
             message.textContent = 'Database is not ready.';
@@ -111,69 +152,57 @@ function setupAdminLogin() {
 
         }
 
-        // Accesses the Admin object store
-        const transaction = db.transaction(['Admin'], 'readonly');
+        try {
 
-        const adminStore = transaction.objectStore('Admin');
+            // Retrieve all admin records.
+            const admins = await getAllAdmins();
 
-        // Finds the admin using the entered username
-        const request = adminStore.get(username);
+            let matchingAdmin = null;
 
-        request.onsuccess = async function() {
+            // Decrypt usernames to find the matching account.
+            for (const admin of admins) {
 
-            const admin = request.result;
+                const decryptedUsername =
+                    await decryptAdminUsername(admin.username);
 
-            // Checks whether the admin exists and has hashed credentials
-            if (!admin || !admin.passwordHash || !admin.passwordSalt) {
+                if (decryptedUsername === username) {
+
+                    matchingAdmin = admin;
+                    break;
+
+                }
+
+            }
+
+            // Check the password without changing it.
+            if (matchingAdmin && matchingAdmin.password === password) {
+
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                sessionStorage.setItem('userRole', 'admin');
+
+                window.location.href = 'admin.html';
+
+            }
+            else {
 
                 message.textContent = 'Incorrect username or password.';
-                return;
 
             }
 
-            try {
+        }
+        catch (error) {
 
-                // Verify the entered password
-                const passwordMatches = await verifyPassword(
-                    password,
-                    admin.passwordHash,
-                    admin.passwordSalt
-                );
-
-                if (passwordMatches) {
-
-                    completeAdminLogin();
-
-                }
-                else {
-
-                    message.textContent = 'Incorrect username or password.';
-
-                }
-
-            }
-            catch (error) {
-
-                console.error('Admin password verification error:', error);
-
-                message.textContent = 'Unable to verify login details.';
-
-            }
-
-        };
-
-        request.onerror = function() {
+            console.error("Admin login error:", error);
 
             message.textContent = 'Unable to verify login details.';
 
-        };
+        }
 
     });
 }
 
-
-// Starts the database connection
+// Start the database connection.
 openDatabase();
 
-// Set up the login form
+// Set up the login form.
 setupAdminLogin();
