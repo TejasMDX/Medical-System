@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -267,7 +268,6 @@
             document.getElementById("adminSection").style.display = "none";
         }
 
-        // Display the doctors section and hide the other sections.
         function showDoctorSection() {
 
             document.getElementById("patientSection").style.display = "none";
@@ -275,7 +275,6 @@
             document.getElementById("adminSection").style.display = "none";
         }
 
-        // Display the admins section and hide the other sections.
         function showAdminSection() {
 
             document.getElementById("patientSection").style.display = "none";
@@ -337,10 +336,8 @@
 
             document.getElementById("patientForm").addEventListener("submit", function(event) {
 
-                // Prevent the form from refreshing the page.
                 event.preventDefault();
 
-                // Start a transaction to save the new patient.
                 const transaction = db.transaction(["Patients"], "readwrite");
 
                 const patientsStore = transaction.objectStore("Patients");
@@ -360,7 +357,6 @@
                         }
                     });
 
-                    // Store the patient's information in an object.
                     const patient = {
 
                         id: newId,
@@ -460,10 +456,8 @@
 
             document.getElementById("doctorForm").addEventListener("submit", function(event) {
 
-                // Prevent the form from refreshing the page.
                 event.preventDefault();
 
-                // Start a transaction to save the new doctor.
                 const transaction = db.transaction(["Doctor"], "readwrite");
 
                 const doctorStore = transaction.objectStore("Doctor");
@@ -483,7 +477,6 @@
                         }
                     });
 
-                    // Store the doctor's information in an object.
                     const doctor = {
 
                         id: newId,
@@ -530,118 +523,6 @@
             };
         };
 
-        // Display all the admin usernames saved in the database.
-        function showAllAdmins() {
-
-            const transaction = db.transaction(["Admin"], "readonly");
-
-            const adminStore = transaction.objectStore("Admin");
-
-            const request = adminStore.getAll();
-
-            request.onsuccess = function() {
-
-                const admins = request.result;
-
-                // Create a table to display the admin usernames.
-                let html = `<table border="1">
-                    <tr>
-                        <th>Username</th>
-                    </tr>`;
-
-                admins.forEach(a => {
-                    html += `<tr>
-                        <td>${a.username}</td>
-                    </tr>`;
-                });
-
-                html += `</table>`;
-
-                document.getElementById("adminOutput").innerHTML = html;
-            };
-        }
-
-        // Add a new admin account.
-        function addAdmin() {
-
-            document.getElementById("adminForm").addEventListener("submit", function(event) {
-
-                // Prevent the form from refreshing the page.
-                event.preventDefault();
-
-                const transaction = db.transaction(["Admin"], "readwrite");
-
-                const adminStore = transaction.objectStore("Admin");
-
-                // Store the new admin's username and password.
-                const admin = {
-
-                    username: document.getElementById("adminUsernameInput").value.trim(),
-                    password: document.getElementById("adminPasswordInput").value.trim()
-
-                };
-
-                const addRequest = adminStore.add(admin);
-
-                addRequest.onerror = function() {
-                    alert("Could not add admin. This username may already exist.");
-                };
-
-                transaction.oncomplete = function() {
-
-                    document.getElementById("adminForm").reset();
-
-                    showAllAdmins();
-
-                    alert("Admin added");
-                };
-
-            });
-        }
-
-        addAdmin();
-
-        // Delete an admin account using their username.
-        function deleteAdmin() {
-
-            const username = document.getElementById("deleteAdminUsername").value.trim();
-
-            const transaction = db.transaction(["Admin"], "readwrite");
-
-            const adminStore = transaction.objectStore("Admin");
-
-            let adminFound = false;
-
-            // Search for the admin account using the entered username.
-            const request = adminStore.get(username);
-
-            request.onsuccess = function() {
-
-                if (request.result) {
-
-                    adminFound = true;
-
-                    adminStore.delete(username);
-                }
-            };
-
-            transaction.oncomplete = function() {
-
-                document.getElementById("deleteAdminUsername").value = "";
-
-                if (adminFound) {
-
-                    showAllAdmins();
-
-                    alert("Admin deleted");
-
-                } else {
-
-                    alert("Admin not found");
-                }
-            };
-        }
-
         // Load the selected patient's details so they can be edited.
         function loadPatientForUpdate() {
 
@@ -651,7 +532,6 @@
 
             message.textContent = "";
 
-            // Check that the entered ID is a valid positive number.
             if (!Number.isInteger(id) || id <= 0) {
                 message.textContent = "Please enter a valid patient ID.";
                 return;
@@ -661,7 +541,6 @@
 
             const patientsStore = transaction.objectStore("Patients");
 
-            // Retrieve the patient using their ID.
             const request = patientsStore.get(id);
 
             request.onsuccess = function() {
@@ -673,7 +552,6 @@
                     return;
                 }
 
-                // Fill the form with the patient's existing information.
                 document.getElementById("updateNHS").value = patient.NHS;
                 document.getElementById("updateTitle").value = patient.Title;
                 document.getElementById("updateFirst").value = patient.First;
@@ -698,7 +576,6 @@
         document.getElementById("updatePatientForm").addEventListener(
             "submit", function(event) {
 
-                // Prevent the form from refreshing the page.
                 event.preventDefault();
 
                 const id = Number(document.getElementById("updatePatientId").value);
@@ -722,7 +599,6 @@
                         return;
                     }
 
-                    // Update the patient's details with the new form values.
                     patient.NHS = document.getElementById("updateNHS").value.trim();
                     patient.Title = document.getElementById("updateTitle").value.trim();
                     patient.First = document.getElementById("updateFirst").value.trim();
@@ -733,7 +609,6 @@
                     patient.Email = document.getElementById("updateEmail").value.trim();
                     patient.Telephone = document.getElementById("updateTelephone").value.trim();
 
-                    // Save the updated patient information in the database.
                     const updateRequest = patientsStore.put(patient);
 
                     updateRequest.onsuccess = function() {
@@ -773,12 +648,13 @@
     // Check whether the logged-in user is an admin.
     const userRole = sessionStorage.getItem("userRole")
 
-    // Only allow users with the admin role to view the dashboard.
     if (userRole === "admin") {
         document.getElementById("admin_dashboard").hidden = false
         document.getElementById("access_admin").hidden = true
     }
     </script>
+
+    <script src="admin.js"></script>
 
     <script src="logout.js"></script>
 

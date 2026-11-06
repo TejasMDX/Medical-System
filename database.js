@@ -1,3 +1,5 @@
+
+// Database name
 const DB_NAME = 'CarePointDatabase';
 
 let db;
@@ -16,6 +18,46 @@ const clean = function(database) {
         console.log("Database closed and deleted");
     };
 };
+
+
+// Hash an admin password using the same settings as register.js
+async function hashAdminPassword(password) {
+
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+
+    const key = await crypto.subtle.importKey(
+        'raw',
+        new TextEncoder().encode(password),
+        'PBKDF2',
+        false,
+        ['deriveBits']
+    );
+
+    const hash = await crypto.subtle.deriveBits(
+        {
+            name: 'PBKDF2',
+            salt: salt,
+            iterations: 150000,
+            hash: 'SHA-256'
+        },
+        key,
+        256
+    );
+
+    function toBase64(data) {
+
+        return btoa(
+            String.fromCharCode(...new Uint8Array(data))
+        );
+
+    }
+
+    return {
+        passwordHash: toBase64(hash),
+        passwordSalt: toBase64(salt)
+    };
+
+}
 
 
 // Loads the JSON files
@@ -40,6 +82,23 @@ async function loadJSON() {
 // Adds JSON data to IndexedDB
 async function adding_to_db(admin, doctor, medicine, patients) {
 
+    // Hash admin passwords before storing them.
+    const hashedAdmins = await Promise.all(admin.map(async function(a) {
+
+        const passwordData = await hashAdminPassword(a.password);
+
+        const adminRecord = {
+            ...a,
+            passwordHash: passwordData.passwordHash,
+            passwordSalt: passwordData.passwordSalt
+        };
+
+        delete adminRecord.password;
+
+        return adminRecord;
+
+    }));
+
     // Step 1: Start a transaction
     const transaction = db.transaction(
         ['Admin', 'Doctor', 'Medicine', 'Patients'],
@@ -53,7 +112,7 @@ async function adding_to_db(admin, doctor, medicine, patients) {
     const patientsStore = transaction.objectStore('Patients');
 
     // Step 2: Add the JSON data
-    admin.forEach(function(a) {
+    hashedAdmins.forEach(function(a) {
         adminStore.add(a);
     });
 
