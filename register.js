@@ -1,6 +1,7 @@
-
+// Database name
 const DB_NAME = 'CarePointDatabase';
 
+// Select account type
 let selectedType = '';
 
 

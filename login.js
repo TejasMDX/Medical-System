@@ -2,10 +2,10 @@
 const DB_NAME = 'CarePointDatabase';
 
 
-// Open the existing CarePoint database
+// Opens the existing CarePoint database
 async function openDatabase() {
 
-    // Check whether the database already exists
+    // Checks whether the database already exists
     const databases = await indexedDB.databases();
 
     const exists = databases.some(function(database) {
@@ -37,7 +37,7 @@ async function openDatabase() {
 }
 
 
-// Normalise email addresses
+// Normalises email addresses
 function normaliseEmail(email) {
 
     return String(email ?? '').trim().toLowerCase();
@@ -45,10 +45,10 @@ function normaliseEmail(email) {
 }
 
 
-// Check the entered password against the stored password hash
+// Checks the entered password against the stored password hash
 async function verifyPassword(password, storedHash, storedSalt) {
 
-    // Convert the stored salt from Base64
+    // Converts the stored salt from Base64
     const salt = Uint8Array.from(
         atob(storedSalt),
         function(character) {
@@ -56,7 +56,7 @@ async function verifyPassword(password, storedHash, storedSalt) {
         }
     );
 
-    // Import the entered password
+    // Imports the entered password
     const key = await crypto.subtle.importKey(
         'raw',
         new TextEncoder().encode(password),
@@ -65,7 +65,7 @@ async function verifyPassword(password, storedHash, storedSalt) {
         ['deriveBits']
     );
 
-    // Generate a hash using the same settings as registration
+    // Generates a hash using the same settings as registration
     const hash = await crypto.subtle.deriveBits(
         {
             name: 'PBKDF2',
@@ -77,30 +77,30 @@ async function verifyPassword(password, storedHash, storedSalt) {
         256
     );
 
-    // Convert the generated hash to Base64
+    // Converts the generated hash to Base64
     const generatedHash = btoa(
         String.fromCharCode(...new Uint8Array(hash))
     );
 
-    // Compare the generated hash with the stored hash
+    // Compares the generated hash with the stored hash
     return generatedHash === storedHash;
 
 }
 
 
-// Handle login for Doctors and Patients
+// Handles login for Doctors and Patients
 document.getElementById('LoginForm').addEventListener(
     'submit',
     async function(event) {
 
         event.preventDefault();
 
-        // Normalise the email address
+        // Normalises the email address
         const email = normaliseEmail(
             document.getElementById('email').value
         );
 
-        // Keep the password unchanged
+        // Keeps the password unchanged
         const password = document.getElementById('password').value;
 
         const message = document.getElementById('loginMessage');
@@ -111,10 +111,10 @@ document.getElementById('LoginForm').addEventListener(
 
         try {
 
-            // Open the existing database
+            // Opens the existing database
             database = await openDatabase();
 
-            // Access both object stores
+            // Accesses both object stores
             const transaction = database.transaction(
                 ['Patients', 'Doctor'],
                 'readonly'
@@ -123,7 +123,7 @@ document.getElementById('LoginForm').addEventListener(
             const patientsStore = transaction.objectStore('Patients');
             const doctorStore = transaction.objectStore('Doctor');
 
-            // Retrieve the existing patient and doctor records
+            // Retrieves the existing patient and doctor records
             const patientsRequest = patientsStore.getAll();
             const doctorRequest = doctorStore.getAll();
 
@@ -152,10 +152,10 @@ document.getElementById('LoginForm').addEventListener(
             });
 
 
-            // Find matching patient and doctor accounts
+            // Finds matching patient and doctor accounts
             const matchingAccounts = [];
 
-            // Search the Patients object store
+            // Searches the Patients object store
             patients.forEach(function(patient) {
 
                 if (normaliseEmail(patient.Email) === email) {
@@ -169,7 +169,7 @@ document.getElementById('LoginForm').addEventListener(
 
             });
 
-            // Search the Doctor object store
+            // Searches the Doctor object store
             doctors.forEach(function(doctor) {
 
                 if (normaliseEmail(doctor.email) === email) {
@@ -184,7 +184,7 @@ document.getElementById('LoginForm').addEventListener(
             });
 
 
-            // Check whether the email exists
+            // Checks whether the email exists
             if (matchingAccounts.length === 0) {
 
                 message.textContent = 'Incorrect email or password.';
@@ -195,7 +195,7 @@ document.getElementById('LoginForm').addEventListener(
             }
 
 
-            // Check whether the account has been registered
+            // Checks whether the account has been registered
             const registeredAccounts = matchingAccounts.filter(function(account) {
 
                 return account.record.passwordHash &&
@@ -215,7 +215,7 @@ document.getElementById('LoginForm').addEventListener(
             }
 
 
-            // Verify the password for matching registered accounts
+            // Verifies the password for matching registered accounts
             const validAccounts = [];
 
             for (const account of registeredAccounts) {
@@ -233,7 +233,7 @@ document.getElementById('LoginForm').addEventListener(
             }
 
 
-            // Prevent ambiguous accounts
+            // Prevents ambiguous accounts
             if (validAccounts.length > 1) {
 
                 message.textContent =
@@ -245,7 +245,7 @@ document.getElementById('LoginForm').addEventListener(
             }
 
 
-            // Check whether the password is correct
+            // Checks whether the password is correct
             if (validAccounts.length === 0) {
 
                 message.textContent = 'Incorrect email or password.';
@@ -262,21 +262,21 @@ document.getElementById('LoginForm').addEventListener(
             database.close();
 
 
-            // Redirect according to the account type
+            // Redirects according to the account type
             if (account.type === 'Patient') {
 
-                // Save the patient's login session
+                // Saves the patient's login session
                 sessionStorage.setItem('patientLoggedIn', 'true');
                 sessionStorage.setItem('patientId', account.record.id);
                 sessionStorage.setItem('userRole', 'patient');
 
-                // Redirect to the patient dashboard
+                // Redirects to the patient dashboard
                 window.location.href = 'patient.html';
 
             }
             else if (account.type === 'Doctor') {
 
-                // Save the doctor's login session
+                // Saves the doctor's login session
                 sessionStorage.setItem('doctorLoggedIn', 'true');
                 sessionStorage.setItem('doctorId', account.record.id);
                 sessionStorage.setItem('userRole', 'doctor');
