@@ -1,5 +1,5 @@
 
-// Generate a salted password hash using the same method as register.js.
+// Generates a salted password hash using the same method as register.js.
 async function hashPassword(password) {
 
     const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -39,7 +39,7 @@ async function hashPassword(password) {
 }
 
 
-// Validate admin password strength using the same rules as register.js.
+// Validates admin password strength using the same rules as register.js.
 function validateAdminPassword(password) {
 
     if (password.length < 8) {
@@ -75,7 +75,7 @@ function validateAdminPassword(password) {
 }
 
 
-// Display all the admin usernames saved in the database.
+// Displays all the admin usernames saved in the database.
 function showAllAdmins() {
 
     const transaction = db.transaction(["Admin"], "readonly");
@@ -106,7 +106,7 @@ function showAllAdmins() {
 }
 
 
-// Add a new admin account.
+// Adds a new admin account.
 function addAdmin() {
 
     document.getElementById("adminForm").addEventListener("submit", async function(event) {
@@ -117,7 +117,7 @@ function addAdmin() {
 
         const password = document.getElementById("adminPasswordInput").value;
 
-        // Check password strength.
+        // Checks password strength.
         const passwordError = validateAdminPassword(password);
 
         if (passwordError) {
@@ -129,15 +129,15 @@ function addAdmin() {
 
         try {
 
-            // Generate password hash and salt.
+            // Generates password hash and salt.
             const passwordData = await hashPassword(password);
 
-            // Start a transaction.
+            // Starts a transaction.
             const transaction = db.transaction(["Admin"], "readwrite");
 
             const adminStore = transaction.objectStore("Admin");
 
-            // Store the username, password hash and salt.
+            // Stores the username, password hash and salt.
             const admin = {
 
                 username: username,
@@ -175,7 +175,7 @@ function addAdmin() {
 }
 
 
-// Delete an admin account using its username.
+// Deletes an admin account using its username.
 function deleteAdmin() {
 
     const username = document.getElementById("deleteAdminUsername").value.trim();
