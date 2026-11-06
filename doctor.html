@@ -16,12 +16,12 @@
         <a id="loginButton" href="login.html" class="login-button">Login</a>
     </nav>
 
-    <!-- Access message -->
+    <!-- Access message displayed when the user does not have permission to access the dashboard -->
     <div>
         <p id="access_doctor">Log in as a doctor to access this page.</p>
     </div>
 
-    <!-- Doctor dashboard -->
+    <!-- Doctor dashboard, initially hidden until the user's role is checked -->
     <div hidden id="doctor_dashboard">
         <h1>Doctor Dashboard</h1>
 
@@ -29,10 +29,12 @@
 
         <p>Welcome to your doctor account.</p>
 
+        <!-- Section displaying appointments assigned to the logged-in doctor -->
         <h2>My Appointments</h2>
         <p>View your upcoming appointments and patient details here.</p>
         <div id="appointments"></div>
 
+        <!-- Section for selecting a patient and viewing their records -->
         <h2>Patient Records</h2>
 
         <label for="patient">Choose a Patient:</label>
@@ -47,6 +49,7 @@
 
         <div id="patientRecords"></div>
 
+        <!-- Section for recording medical notes, treatments and prescriptions -->
         <h2>Medical Notes and Treatments</h2>
 
         <p>Add medical notes, treatments and prescribe medicine for a patient.</p>
@@ -98,8 +101,10 @@
 
         doctorDBRequest.onsuccess = function(event) {
 
+            // Store the opened database connection for use by the functions.
             db = event.target.result;
 
+            // Load the doctor's appointments, patients and available medicines.
             showAppointments(db);
             choosePatients(db);
             chooseMedicine(db);
@@ -109,19 +114,23 @@
         // Load the patients into the dropdown list.
         function choosePatients(db) {
 
+            // Create a readonly transaction to retrieve patient records.
             const transaction = db.transaction(["Patients"], "readonly");
             const patientsStore = transaction.objectStore("Patients");
             const request = patientsStore.getAll();
 
             request.onsuccess = function() {
 
+                // Retrieve all patient records returned by IndexedDB.
                 const patients = request.result;
                 const patientDropdown = document.getElementById("patient");
 
+                // Create an option for each patient and add it to the dropdown.
                 patients.forEach(function(patient) {
 
                     const option = document.createElement("option");
 
+                    // Use the patient's ID as the option value.
                     option.value = patient.id;
                     option.textContent = patient.First + " " + patient.Last;
 
@@ -136,19 +145,23 @@
         // Display the appointments assigned to the logged-in doctor.
         function showAppointments(db) {
 
+            // Retrieve appointments and patient records in one readonly transaction.
             const transaction = db.transaction(["Appointment", "Patients"], "readonly");
 
             const appointmentStore = transaction.objectStore("Appointment");
             const patientsStore = transaction.objectStore("Patients");
 
+            // Retrieve all appointments and patients from their respective object stores.
             const appointmentRequest = appointmentStore.getAll();
             const patientsRequest = patientsStore.getAll();
 
+            // Wait until both database requests have completed.
             transaction.oncomplete = function() {
 
                 const appointments = appointmentRequest.result;
                 const patients = patientsRequest.result;
 
+                // Create the HTML table used to display appointment details.
                 let html = `<table border="1">
                     <tr>
                         <th>Appointment ID</th>
@@ -157,14 +170,18 @@
                         <th>Time</th>
                     </tr>`;
 
+                // Loop through the appointments and filter them by doctor ID.
                 appointments.forEach(a => {
 
+                    // Convert both IDs to numbers before comparing them.
                     if (Number(a.doctor_id) === Number(currentDoctorId)) {
 
+                        // Find the patient whose ID matches the appointment's patient ID.
                         const patient = patients.find(p =>
                             Number(p.id) === Number(a.patient_id)
                         );
 
+                        // Add the appointment to the table if the patient exists.
                         if (patient) {
 
                             html += `<tr>
@@ -180,6 +197,7 @@
 
                 });
 
+                // Close the table and display it inside the appointments container.
                 html += `</table>`;
 
                 document.getElementById("appointments").innerHTML = html;
@@ -191,6 +209,7 @@
         // Load the available medicines into the dropdown list.
         function chooseMedicine(db) {
 
+            // Create a readonly transaction to retrieve medicine records.
             const transaction = db.transaction(["Medicine"], "readonly");
             const medicineStore = transaction.objectStore("Medicine");
             const request = medicineStore.getAll();
@@ -200,6 +219,7 @@
                 const medicines = request.result;
                 const medicineDropdown = document.getElementById("medicine");
 
+                // Create an option for each medicine using its ID and drug name.
                 medicines.forEach(function(medicine) {
 
                     const option = document.createElement("option");
@@ -222,6 +242,7 @@
             let patientID = document.getElementById("patient").value;
             let instructions = document.getElementById("instructions").value;
 
+            // Check that all required fields have been completed.
             if (medicineID === "" || patientID === "" || instructions === "") {
 
                 alert("Please fill in all fields.");
@@ -229,16 +250,21 @@
             }
             else {
 
+                // Create a readwrite transaction to save the prescription.
                 const transaction = db.transaction(["Prescription"], "readwrite");
                 const prescriptionStore = transaction.objectStore("Prescription");
                 const request = prescriptionStore.getAll();
 
                 request.onsuccess = function() {
 
+                    // Retrieve existing prescriptions and generate the next ID.
                     const prescriptions = request.result;
                     const prescriptionID = get_prescription_id(prescriptions);
+
+                    // Generate the current date in YYYY-MM-DD format.
                     const date = new Date().toISOString().split("T")[0];
 
+                    // Create the prescription object containing its related IDs and details.
                     const prescription = {
                         prescription_id: prescriptionID,
                         medicine_id: Number(medicineID),
@@ -248,10 +274,12 @@
                         date: date
                     };
 
+                    // Add the prescription record to the IndexedDB object store.
                     prescriptionStore.add(prescription);
 
                 };
 
+                // Display a confirmation and clear the medicine and instructions fields.
                 transaction.oncomplete = function() {
 
                     alert("Prescription saved.");
@@ -268,8 +296,10 @@
         // Generate the next prescription ID.
         function get_prescription_id(prescriptions) {
 
+            // Start the ID counter at 1.
             let prescriptionID = 1;
 
+            // Compare existing IDs to find the next available ID.
             prescriptions.forEach(function(prescription) {
 
                 if (Number(prescription.prescription_id) >= prescriptionID) {
@@ -278,6 +308,7 @@
 
             });
 
+            // Return the generated prescription ID.
             return prescriptionID;
 
         }
@@ -287,11 +318,13 @@
 
             let patientID = document.getElementById("patient").value;
 
+            // Check whether a patient has been selected.
             if (patientID === "") {
                 alert("Please select a patient.");
                 return;
             }
 
+            // Retrieve the selected patient using their ID.
             const transaction = db.transaction(["Patients"], "readonly");
             const patientsStore = transaction.objectStore("Patients");
             const request = patientsStore.get(Number(patientID));
@@ -300,6 +333,7 @@
 
                 const patient = request.result;
 
+                // Display the patient's personal details if a matching record is found.
                 if (patient) {
 
                     let html = `<h3>Patient Details</h3>
@@ -315,6 +349,7 @@
                             <tr><th>Telephone</th><td>${patient.Telephone}</td></tr>
                         </table>`;
 
+                    // Insert the generated patient details table into the page.
                     document.getElementById("patientRecords").innerHTML = html;
 
                 }
@@ -333,6 +368,7 @@
             let notes = document.getElementById("notes").value;
             let treatment = document.getElementById("treatment").value;
 
+            // Check that all required fields have been completed.
             if (patientID === "" || notes === "" || treatment === "") {
 
                 alert("Please fill in all fields.");
@@ -340,16 +376,21 @@
             }
             else {
 
+                // Create a readwrite transaction to save the medical history record.
                 const transaction = db.transaction(["MedicalHistory"], "readwrite");
                 const medicalHistoryStore = transaction.objectStore("MedicalHistory");
                 const request = medicalHistoryStore.getAll();
 
                 request.onsuccess = function() {
 
+                    // Retrieve existing records and generate the next history ID.
                     const medicalRecords = request.result;
                     const historyID = get_medical_history_id(medicalRecords);
+
+                    // Generate the current date in YYYY-MM-DD format.
                     const date = new Date().toISOString().split("T")[0];
 
+                    // Create the medical history object with the selected patient and doctor IDs.
                     const medicalHistory = {
                         history_id: historyID,
                         patient_id: Number(patientID),
@@ -359,10 +400,12 @@
                         date: date
                     };
 
+                    // Add the medical history record to IndexedDB.
                     medicalHistoryStore.add(medicalHistory);
 
                 };
 
+                // Display a confirmation and clear the medical notes and treatment fields.
                 transaction.oncomplete = function() {
 
                     alert("Medical notes saved.");
@@ -379,8 +422,10 @@
         // Generate the next medical history ID.
         function get_medical_history_id(medicalRecords) {
 
+            // Start the ID counter at 1.
             let historyID = 1;
 
+            // Compare existing history IDs to find the next available ID.
             medicalRecords.forEach(function(record) {
 
                 if (Number(record.history_id) >= historyID) {
@@ -389,6 +434,7 @@
 
             });
 
+            // Return the generated medical history ID.
             return historyID;
 
         }
@@ -398,6 +444,8 @@
     <!-- Additional AES-256 encryption functionality -->
     <script>
 
+        // The following functions replace the original save functions with encrypted versions.
+
         // Encrypt prescription instructions before storing them.
         window.savePrescription = async function() {
 
@@ -405,6 +453,7 @@
             const patientID = document.getElementById("patient").value;
             const instructions = document.getElementById("instructions").value;
 
+            // Check that all required fields have been completed.
             if (!medicineID || !patientID || !instructions) {
                 alert("Please fill in all fields.");
                 return;
@@ -412,14 +461,17 @@
 
             try {
 
+                // Encrypt the prescription instructions before storing them.
                 const encryptedInstructions = await encryptText(instructions);
 
+                // Create a readwrite transaction for the Prescription object store.
                 const transaction = db.transaction(["Prescription"], "readwrite");
                 const store = transaction.objectStore("Prescription");
                 const request = store.getAll();
 
                 request.onsuccess = function() {
 
+                    // Create the prescription record using the encrypted instructions.
                     const prescription = {
                         prescription_id: get_prescription_id(request.result),
                         medicine_id: Number(medicineID),
@@ -429,14 +481,17 @@
                         date: new Date().toISOString().split("T")[0]
                     };
 
+                    // Save the encrypted prescription in IndexedDB.
                     store.add(prescription);
 
                 };
 
+                // Display an error if existing prescriptions cannot be retrieved.
                 request.onerror = function() {
                     alert("Unable to retrieve prescriptions.");
                 };
 
+                // Confirm successful completion and clear the input fields.
                 transaction.oncomplete = function() {
 
                     alert("Encrypted prescription saved.");
@@ -446,6 +501,7 @@
 
                 };
 
+                // Display an error if the prescription cannot be saved.
                 transaction.onerror = function() {
                     alert("Unable to save prescription.");
                 };
@@ -453,6 +509,7 @@
             }
             catch (error) {
 
+                // Display the encryption error in the browser console.
                 console.error("Prescription encryption error:", error);
                 alert("Encryption failed. Prescription was not saved.");
 
@@ -468,6 +525,7 @@
             const notes = document.getElementById("notes").value;
             const treatment = document.getElementById("treatment").value;
 
+            // Check that all required fields have been completed.
             if (!patientID || !notes || !treatment) {
                 alert("Please fill in all fields.");
                 return;
@@ -475,15 +533,18 @@
 
             try {
 
+                // Encrypt the medical notes and treatment separately.
                 const encryptedNotes = await encryptText(notes);
                 const encryptedTreatment = await encryptText(treatment);
 
+                // Create a readwrite transaction for the MedicalHistory object store.
                 const transaction = db.transaction(["MedicalHistory"], "readwrite");
                 const store = transaction.objectStore("MedicalHistory");
                 const request = store.getAll();
 
                 request.onsuccess = function() {
 
+                    // Create the medical history record using the encrypted information.
                     const medicalHistory = {
                         history_id: get_medical_history_id(request.result),
                         patient_id: Number(patientID),
@@ -493,14 +554,17 @@
                         date: new Date().toISOString().split("T")[0]
                     };
 
+                    // Save the encrypted medical history record in IndexedDB.
                     store.add(medicalHistory);
 
                 };
 
+                // Display an error if existing medical records cannot be retrieved.
                 request.onerror = function() {
                     alert("Unable to retrieve medical records.");
                 };
 
+                // Confirm successful completion and clear the input fields.
                 transaction.oncomplete = function() {
 
                     alert("Encrypted medical notes saved.");
@@ -510,6 +574,7 @@
 
                 };
 
+                // Display an error if the medical history record cannot be saved.
                 transaction.onerror = function() {
                     alert("Unable to save medical notes.");
                 };
@@ -517,6 +582,7 @@
             }
             catch (error) {
 
+                // Display the encryption error in the browser console.
                 console.error("Medical encryption error:", error);
                 alert("Encryption failed. Medical notes were not saved.");
 
@@ -531,6 +597,7 @@
         // Check whether the logged-in user can access the doctor dashboard.
         const userRole = sessionStorage.getItem("userRole");
 
+        // Display the dashboard for users with the doctor or admin role.
         if (userRole === "doctor" || userRole === "admin") {
             document.getElementById("doctor_dashboard").hidden = false;
             document.getElementById("access_doctor").hidden = true;
