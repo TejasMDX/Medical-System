@@ -698,10 +698,13 @@ body.register-page {
     padding: 20px;
     box-sizing: border-box;
 
+    display: flex;
+    flex-direction: column;
+
     background:
         linear-gradient(
-            rgba(244, 249, 247, 0.45),
-            rgba(244, 249, 247, 0.45)
+            rgba(232, 245, 238, 0.35),
+            rgba(244, 249, 247, 0.35)
         ),
         url("images/image6.jpg") center/cover no-repeat;
 
@@ -712,12 +715,13 @@ body.register-page {
 .registration-container {
     width: 100%;
     max-width: 500px;
-    margin: 30px auto;
+    margin: auto;
     padding: 30px;
     box-sizing: border-box;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-80px);
 }
 
 /* Registration image */
@@ -729,7 +733,7 @@ body.register-page {
 /* Registration headings */
 .registration-container h2 {
     text-align: center;
-    color: #198754;
+    color: #000;
 }
 
 /* Account type buttons */
