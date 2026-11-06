@@ -2,7 +2,7 @@ const DB_NAME = 'CarePointDatabase';
 
 let db;
 
-// Open the existing CarePoint database
+// Opens the existing CarePoint database
 function openDatabase() {
 
     const request = indexedDB.open(DB_NAME, 1);
@@ -22,7 +22,7 @@ function openDatabase() {
     };
 }
 
-// Handle admin login
+// Handles admin login
 function setupAdminLogin() {
 
     const form = document.getElementById('adminLoginForm');
@@ -35,24 +35,24 @@ function setupAdminLogin() {
         const password = document.getElementById('password').value;
         const message = document.getElementById('loginMessage');
 
-        // Ensure the database is available
+        // Ensures the database is available
         if (!db) {
             message.textContent = 'Database is not ready.';
             return;
         }
 
-        // Access the Admin object store
+        // Accesses the Admin object store
         const transaction = db.transaction(['Admin'], 'readonly');
         const adminStore = transaction.objectStore('Admin');
 
-        // Find the admin using the entered username
+        // Finds the admin using the entered username
         const request = adminStore.get(username);
 
         request.onsuccess = function() {
 
             const admin = request.result;
 
-            // Check the password
+            // Checks the password
             if (admin && admin.password === password) {
 
                 sessionStorage.setItem('adminLoggedIn', 'true');
@@ -77,7 +77,7 @@ function setupAdminLogin() {
     });
 }
 
-// Start the database connection
+// Starts the database connection
 openDatabase();
 
 // Set up the login form

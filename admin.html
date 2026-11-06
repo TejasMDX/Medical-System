@@ -7,6 +7,7 @@
 
 <body class="admin-page">
 
+    <!-- Navigation bar -->
     <nav>
         <a href="index.html">Home</a>
         <a href="about.html">About</a>
@@ -17,6 +18,7 @@
 
     <p id="access_admin">Log in as an admin to access this page.</p>
 
+    <!-- Admin dashboard -->
     <div hidden id="admin_dashboard">
 
     <h1>Admin Dashboard</h1>
@@ -29,6 +31,7 @@
 
     <button type="button" onclick="showAdminSection()">Admins</button>
 
+    <!-- Patient management section -->
     <div id="patientSection">
 
     <h1>Patients Section</h1>
@@ -39,7 +42,7 @@
 
     <form id="patientForm">
 
-        <!-- These fields are used to enter the patient's details. -->
+        <!-- Enter the new patient's details here. -->
         <label for="nhsInput">NHS:</label>
         <input id="nhsInput" type="text" required>
         <br>
@@ -84,68 +87,66 @@
 
     <p>View and manage registered patient information below.</p>
 
-    <!-- This button displays the registered patients. -->
     <button onclick="showAllPatients()">Show Patients</button>
     <div id="output"></div>
 
     <h2>Update Patient Records</h2>
 
-<p>Update patient information below.</p>
+    <p>Update patient information below.</p>
 
-<label for="updatePatientId">Patient ID:</label>
-<input id="updatePatientId" type="text" min="1" required>
+    <label for="updatePatientId">Patient ID:</label>
+    <input id="updatePatientId" type="text" min="1" required>
 
-<button type="button" onclick="loadPatientForUpdate()">Load Patient</button>
+    <button type="button" onclick="loadPatientForUpdate()">Load Patient</button>
 
-<form id="updatePatientForm" hidden>
+    <form id="updatePatientForm" hidden>
 
-    <label for="updateNHS">NHS:</label>
-    <input id="updateNHS" type="text" required>
-    <br>
+        <label for="updateNHS">NHS:</label>
+        <input id="updateNHS" type="text" required>
+        <br>
 
-    <label for="updateTitle">Title:</label>
-    <input id="updateTitle" type="text" required>
-    <br>
+        <label for="updateTitle">Title:</label>
+        <input id="updateTitle" type="text" required>
+        <br>
 
-    <label for="updateFirst">First Name:</label>
-    <input id="updateFirst" type="text" required>
-    <br>
+        <label for="updateFirst">First Name:</label>
+        <input id="updateFirst" type="text" required>
+        <br>
 
-    <label for="updateLast">Last Name:</label>
-    <input id="updateLast" type="text" required>
-    <br>
+        <label for="updateLast">Last Name:</label>
+        <input id="updateLast" type="text" required>
+        <br>
 
-    <label for="updateDOB">DOB:</label>
-    <input id="updateDOB" type="text" required>
-    <br>
+        <label for="updateDOB">DOB:</label>
+        <input id="updateDOB" type="text" required>
+        <br>
 
-    <label for="updateGender">Gender:</label>
-    <input id="updateGender" type="text" required>
-    <br>
+        <label for="updateGender">Gender:</label>
+        <input id="updateGender" type="text" required>
+        <br>
 
-    <label for="updateAddress">Address:</label>
-    <input id="updateAddress" type="text" required>
-    <br>
+        <label for="updateAddress">Address:</label>
+        <input id="updateAddress" type="text" required>
+        <br>
 
-    <label for="updateEmail">Email:</label>
-    <input id="updateEmail" type="email" required>
-    <br>
+        <label for="updateEmail">Email:</label>
+        <input id="updateEmail" type="email" required>
+        <br>
 
-    <label for="updateTelephone">Telephone:</label>
-    <input id="updateTelephone" type="text" required>
-    <br>
+        <label for="updateTelephone">Telephone:</label>
+        <input id="updateTelephone" type="text" required>
+        <br>
 
-    <button type="submit">Update Patient</button>
+        <button type="submit">Update Patient</button>
 
-</form>
+    </form>
 
-<p id="updatePatientMessage"></p>
+    <p id="updatePatientMessage"></p>
 
     <h2>Delete Patient Records</h2>
 
     <p>Delete patient information below.</p>
 
-    <!-- This field is used to enter the ID of the patient to delete. -->
     <label for="deletePatientId">Patient ID:</label>
     <input id="deletePatientId" type="text" required>
 
@@ -153,6 +154,7 @@
 
     </div>
 
+    <!-- Doctor management section -->
     <div id="doctorSection" style="display: none;">
 
     <h1>Doctors Section</h1>
@@ -163,7 +165,7 @@
 
     <form id="doctorForm">
 
-        <!-- These fields are used to enter the doctor's details. -->
+        <!-- Enter the new doctor's details here. -->
         <label for="doctorFirstInput">First Name:</label>
         <input id="doctorFirstInput" type="text" required>
         <br>
@@ -196,7 +198,6 @@
 
     <p>View registered doctor information below.</p>
 
-    <!-- This button loads and displays the doctor records. -->
     <button onclick="showAllDoctors()">Show Doctors</button>
     <div id="doctorOutput"></div>
 
@@ -204,7 +205,6 @@
 
     <p>Delete doctor information below.</p>
 
-    <!-- This field is used to enter the ID of the doctor to delete. -->
     <label for="deleteDoctorId">Doctor ID:</label>
     <input id="deleteDoctorId" type="text" required>
 
@@ -212,6 +212,7 @@
 
     </div>
 
+    <!-- Admin account management section -->
     <div id="adminSection" style="display: none;">
 
         <h1>Admins Section</h1>
@@ -258,13 +259,13 @@
 
     <script>
 
+        // Switch between the different dashboard sections.
         function showPatientSection() {
 
             document.getElementById("patientSection").style.display = "block";
             document.getElementById("doctorSection").style.display = "none";
             document.getElementById("adminSection").style.display = "none";
         }
-
 
         function showDoctorSection() {
 
@@ -273,7 +274,6 @@
             document.getElementById("adminSection").style.display = "none";
         }
 
-
         function showAdminSection() {
 
             document.getElementById("patientSection").style.display = "none";
@@ -281,24 +281,20 @@
             document.getElementById("adminSection").style.display = "block";
         }
 
-
+        // Display all the patients saved in the database.
         function showAllPatients() {
 
-
-            // Start a transaction to read patient records.
             const transaction = db.transaction(["Patients"], "readonly");
 
-            // Access the Patients object store.
             const patientsStore = transaction.objectStore("Patients");
 
-            // Get all the patient records.
             const request = patientsStore.getAll();
 
             request.onsuccess = function() {
 
                 const patients = request.result;
 
-                // This creates the table headings for the patient records.
+                // Create a table to display the patient records.
                 let html = `<table border="1">
                     <tr>
                         <th>ID</th>
@@ -313,7 +309,6 @@
                         <th>Telephone</th>
                     </tr>`;
 
-                // This adds each patient's details to the table.
                 patients.forEach(p => {
                     html += `<tr>
                         <td>${p.id}</td>
@@ -329,37 +324,30 @@
                     </tr>`;
                 });
 
-                // This closes the patient table.
                 html += `</table>`;
 
-                // This displays the patient table on the page.
                 document.getElementById("output").innerHTML = html;
             };
         }
 
-
+        // Add a new patient to the database.
         function addPatient() {
 
-            // This runs when the patient form is submitted.
             document.getElementById("patientForm").addEventListener("submit", function(event) {
 
-                // This stops the page from refreshing.
                 event.preventDefault();
 
-                // Start a transaction to add a patient.
                 const transaction = db.transaction(["Patients"], "readwrite");
 
-                // Access the Patients object store.
                 const patientsStore = transaction.objectStore("Patients");
 
-                // Get all existing patients.
                 const request = patientsStore.getAll();
 
                 request.onsuccess = function() {
 
                     const patients = request.result;
 
-                    // This finds the next available ID.
+                    // Find the next available patient ID.
                     let newId = 1;
 
                     patients.forEach(p => {
@@ -368,7 +356,6 @@
                         }
                     });
 
-                    // This collects the details entered into the form.
                     const patient = {
 
                         id: newId,
@@ -383,69 +370,56 @@
                         Telephone: document.getElementById("telephoneInput").value.trim()
                     };
 
-                    // Add the new patient to IndexedDB.
                     const addRequest = patientsStore.add(patient);
 
                 };
 
                 transaction.oncomplete = function() {
 
-                    // Clear the form after adding the patient.
                     document.getElementById("patientForm").reset();
 
-                    // Refresh the patient records.
                     showAllPatients();
                 };
 
             });
         }
 
-        // This sets up the form so patients can be added.
         addPatient();
 
-
+        // Delete a patient using their ID.
         function deletePatient() {
 
-            // This gets the ID entered for the patient to delete.
             const id = Number(document.getElementById("deletePatientId").value);
 
-            // Start a transaction to delete a patient.
             const transaction = db.transaction(["Patients"], "readwrite");
 
-            // Access the Patients object store.
             const store = transaction.objectStore("Patients");
 
-            // Delete the patient with the entered ID.
             const deleteRequest = store.delete(id);
 
             deleteRequest.onsuccess = function() {
 
-                // This clears the ID field.
                 document.getElementById("deletePatientId").value = "";
 
-                // This refreshes the patient records.
                 showAllPatients();
             };
 
         }
 
-
+        // Display all the doctors saved in the database.
         function showAllDoctors() {
 
-            // Start a transaction to read doctor records.
             const transaction = db.transaction(["Doctor"], "readonly");
 
-            // Access the Doctor object store.
             const doctorStore = transaction.objectStore("Doctor");
 
-            // Get all the doctor records.
             const request = doctorStore.getAll();
 
             request.onsuccess = function() {
 
                 const doctors = request.result;
 
-                // This creates the table headings for the doctor records.
+                // Create a table to display the doctor records.
                 let html = `<table border="1">
                     <tr>
                         <th>ID</th>
@@ -457,7 +431,6 @@
                         <th>Telephone</th>
                     </tr>`;
 
-                // This adds each doctor's details to the table.
                 doctors.forEach(d => {
                     html += `<tr>
                         <td>${d.id}</td>
@@ -470,38 +443,31 @@
                     </tr>`;
                 });
 
-                // This closes the doctor table.
                 html += `</table>`;
 
-                // This displays the doctor table on the page.
                 document.getElementById("doctorOutput").innerHTML = html;
             };
 
         }
 
-
+        // Add a new doctor to the database.
         function addDoctor() {
 
-            // This runs when the doctor form is submitted.
             document.getElementById("doctorForm").addEventListener("submit", function(event) {
 
-                // This stops the page from refreshing.
                 event.preventDefault();
 
-                // Start a transaction to add a doctor.
                 const transaction = db.transaction(["Doctor"], "readwrite");
 
-                // Access the Doctor object store.
                 const doctorStore = transaction.objectStore("Doctor");
 
-                // Get all existing doctors.
                 const request = doctorStore.getAll();
 
                 request.onsuccess = function() {
 
                     const doctors = request.result;
 
-                    // This finds the next available ID.
+                    // Find the next available doctor ID.
                     let newId = 1;
 
                     doctors.forEach(d => {
@@ -510,7 +476,6 @@
                         }
                     });
 
-                    // This collects the details entered into the form.
                     const doctor = {
 
                         id: newId,
@@ -522,51 +487,42 @@
                         Telephone: document.getElementById("doctorTelephoneInput").value.trim()
                     };
 
-                    // Add the new doctor to IndexedDB.
                     const addRequest = doctorStore.add(doctor);
 
                 };
 
                 transaction.oncomplete = function() {
 
-                    // Clear the form after adding the doctor.
                     document.getElementById("doctorForm").reset();
 
-                    // Refresh the doctor records.
                     showAllDoctors();
                 };
 
             });
         }
 
-        // This sets up the form so doctors can be added.
         addDoctor();
 
-
+        // Delete a doctor using their ID.
         function deleteDoctor() {
 
-            // This gets the ID entered for the doctors to delete.
             const id = Number(document.getElementById("deleteDoctorId").value);
 
-            // Start a transaction to delete a doctor.
             const transaction = db.transaction(["Doctor"], "readwrite");
 
-            // Access the Doctors object store.
             const store = transaction.objectStore("Doctor");
 
-            // Delete the doctor with the entered ID.
             const deleteRequest = store.delete(id);
 
             deleteRequest.onsuccess = function() {
 
-                // This clears the ID field.
                 document.getElementById("deleteDoctorId").value = "";
 
-                // This refreshes the doctor records.
                 showAllDoctors();
             };
         };
 
+        // Display all the admin usernames saved in the database.
         function showAllAdmins() {
 
             const transaction = db.transaction(["Admin"], "readonly");
@@ -595,7 +551,8 @@
                 document.getElementById("adminOutput").innerHTML = html;
             };
         }
-    
+
+        // Add a new admin account.
         function addAdmin() {
 
             document.getElementById("adminForm").addEventListener("submit", function(event) {
@@ -633,169 +590,169 @@
 
         addAdmin();
 
+        // Delete an admin account using their username.
         function deleteAdmin() {
 
-        const username = document.getElementById("deleteAdminUsername").value.trim();
+            const username = document.getElementById("deleteAdminUsername").value.trim();
 
-        const transaction = db.transaction(["Admin"], "readwrite");
+            const transaction = db.transaction(["Admin"], "readwrite");
 
-        const adminStore = transaction.objectStore("Admin");
+            const adminStore = transaction.objectStore("Admin");
 
-        let adminFound = false;
+            let adminFound = false;
 
-        const request = adminStore.get(username);
+            const request = adminStore.get(username);
 
-        request.onsuccess = function() {
+            request.onsuccess = function() {
 
-            if (request.result) {
+                if (request.result) {
 
-                adminFound = true;
+                    adminFound = true;
 
-                adminStore.delete(username);
-            }
-        };
+                    adminStore.delete(username);
+                }
+            };
 
-        transaction.oncomplete = function() {
+            transaction.oncomplete = function() {
 
-            document.getElementById("deleteAdminUsername").value = "";
+                document.getElementById("deleteAdminUsername").value = "";
 
-            if (adminFound) {
+                if (adminFound) {
 
-                showAllAdmins();
+                    showAllAdmins();
 
-                alert("Admin deleted");
+                    alert("Admin deleted");
 
-            } else {
+                } else {
 
-                alert("Admin not found");
-            }
-        };
-    }
-
-    // Load an existing patient for updating
-function loadPatientForUpdate() {
-
-    const id = Number(document.getElementById("updatePatientId").value);
-
-    const message = document.getElementById("updatePatientMessage");
-
-    message.textContent = "";
-
-    if (!Number.isInteger(id) || id <= 0) {
-        message.textContent = "Please enter a valid patient ID.";
-        return;
-    }
-
-    const transaction = db.transaction(["Patients"], "readonly");
-
-    const patientsStore = transaction.objectStore("Patients");
-
-    const request = patientsStore.get(id);
-
-    request.onsuccess = function() {
-
-        const patient = request.result;
-
-        if (!patient) {
-            message.textContent = "Patient not found.";
-            return;
+                    alert("Admin not found");
+                }
+            };
         }
 
-        document.getElementById("updateNHS").value = patient.NHS;
-        document.getElementById("updateTitle").value = patient.Title;
-        document.getElementById("updateFirst").value = patient.First;
-        document.getElementById("updateLast").value = patient.Last;
-        document.getElementById("updateDOB").value = patient.DOB;
-        document.getElementById("updateGender").value = patient.Gender;
-        document.getElementById("updateAddress").value = patient.Address;
-        document.getElementById("updateEmail").value = patient.Email;
-        document.getElementById("updateTelephone").value = patient.Telephone;
+        // Load the selected patient's details so they can be edited.
+        function loadPatientForUpdate() {
 
-        document.getElementById("updatePatientForm").hidden = false;
+            const id = Number(document.getElementById("updatePatientId").value);
 
-    };
+            const message = document.getElementById("updatePatientMessage");
 
-    request.onerror = function() {
-        message.textContent = "Unable to retrieve patient information.";
-    };
+            message.textContent = "";
 
-}
-
-
-// Handle patient information updates
-document.getElementById("updatePatientForm").addEventListener(
-    "submit", function(event) {
-
-        event.preventDefault();
-
-        const id = Number(document.getElementById("updatePatientId").value);
-
-        const message = document.getElementById("updatePatientMessage");
-
-        const transaction = db.transaction(["Patients"], "readwrite");
-
-        const patientsStore = transaction.objectStore("Patients");
-
-        const request = patientsStore.get(id);
-
-        let patientUpdated = false;
-
-        request.onsuccess = function() {
-
-            const patient = request.result;
-
-            if (!patient) {
-                message.textContent = "Patient not found.";
+            if (!Number.isInteger(id) || id <= 0) {
+                message.textContent = "Please enter a valid patient ID.";
                 return;
             }
 
-            // Update the patient's existing information
-            patient.NHS = document.getElementById("updateNHS").value.trim();
-            patient.Title = document.getElementById("updateTitle").value.trim();
-            patient.First = document.getElementById("updateFirst").value.trim();
-            patient.Last = document.getElementById("updateLast").value.trim();
-            patient.DOB = document.getElementById("updateDOB").value.trim();
-            patient.Gender = document.getElementById("updateGender").value.trim();
-            patient.Address = document.getElementById("updateAddress").value.trim();
-            patient.Email = document.getElementById("updateEmail").value.trim();
-            patient.Telephone = document.getElementById("updateTelephone").value.trim();
+            const transaction = db.transaction(["Patients"], "readonly");
 
-            const updateRequest = patientsStore.put(patient);
+            const patientsStore = transaction.objectStore("Patients");
 
-            updateRequest.onsuccess = function() {
-                patientUpdated = true;
+            const request = patientsStore.get(id);
+
+            request.onsuccess = function() {
+
+                const patient = request.result;
+
+                if (!patient) {
+                    message.textContent = "Patient not found.";
+                    return;
+                }
+
+                document.getElementById("updateNHS").value = patient.NHS;
+                document.getElementById("updateTitle").value = patient.Title;
+                document.getElementById("updateFirst").value = patient.First;
+                document.getElementById("updateLast").value = patient.Last;
+                document.getElementById("updateDOB").value = patient.DOB;
+                document.getElementById("updateGender").value = patient.Gender;
+                document.getElementById("updateAddress").value = patient.Address;
+                document.getElementById("updateEmail").value = patient.Email;
+                document.getElementById("updateTelephone").value = patient.Telephone;
+
+                document.getElementById("updatePatientForm").hidden = false;
+
             };
 
-        };
+            request.onerror = function() {
+                message.textContent = "Unable to retrieve patient information.";
+            };
 
-        transaction.oncomplete = function() {
+        }
 
-            if (patientUpdated) {
+        // Save the changes made to the patient's details.
+        document.getElementById("updatePatientForm").addEventListener(
+            "submit", function(event) {
 
-                message.textContent = "Patient information updated successfully.";
+                event.preventDefault();
 
-                document.getElementById("updatePatientForm").reset();
+                const id = Number(document.getElementById("updatePatientId").value);
 
-                document.getElementById("updatePatientForm").hidden = true;
+                const message = document.getElementById("updatePatientMessage");
 
-                document.getElementById("updatePatientId").value = "";
+                const transaction = db.transaction(["Patients"], "readwrite");
 
-                showAllPatients();
+                const patientsStore = transaction.objectStore("Patients");
+
+                const request = patientsStore.get(id);
+
+                let patientUpdated = false;
+
+                request.onsuccess = function() {
+
+                    const patient = request.result;
+
+                    if (!patient) {
+                        message.textContent = "Patient not found.";
+                        return;
+                    }
+
+                    patient.NHS = document.getElementById("updateNHS").value.trim();
+                    patient.Title = document.getElementById("updateTitle").value.trim();
+                    patient.First = document.getElementById("updateFirst").value.trim();
+                    patient.Last = document.getElementById("updateLast").value.trim();
+                    patient.DOB = document.getElementById("updateDOB").value.trim();
+                    patient.Gender = document.getElementById("updateGender").value.trim();
+                    patient.Address = document.getElementById("updateAddress").value.trim();
+                    patient.Email = document.getElementById("updateEmail").value.trim();
+                    patient.Telephone = document.getElementById("updateTelephone").value.trim();
+
+                    const updateRequest = patientsStore.put(patient);
+
+                    updateRequest.onsuccess = function() {
+                        patientUpdated = true;
+                    };
+
+                };
+
+                transaction.oncomplete = function() {
+
+                    if (patientUpdated) {
+
+                        message.textContent = "Patient information updated successfully.";
+
+                        document.getElementById("updatePatientForm").reset();
+
+                        document.getElementById("updatePatientForm").hidden = true;
+
+                        document.getElementById("updatePatientId").value = "";
+
+                        showAllPatients();
+
+                    }
+
+                };
+
+                transaction.onerror = function() {
+                    message.textContent = "Unable to update patient information.";
+                };
 
             }
+        );
 
-        };
-
-        transaction.onerror = function() {
-            message.textContent = "Unable to update patient information.";
-        };
-
-    }
-);
-                
     </script>
 
     <script>
+    // Check whether the logged-in user is an admin.
     const userRole = sessionStorage.getItem("userRole")
 
     if (userRole === "admin") {
@@ -804,7 +761,7 @@ document.getElementById("updatePatientForm").addEventListener(
     }
     </script>
 
-<script src="logout.js"></script>
+    <script src="logout.js"></script>
 
 </body>
 </html>

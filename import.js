@@ -3,7 +3,7 @@ const DB_NAME = 'CarePointDatabase';
 let db;
 
 
-// Clean the existing database
+// Cleans the existing database
 const clean = function(database) {
 
     if (database) {
@@ -18,7 +18,7 @@ const clean = function(database) {
 };
 
 
-// Load the JSON files
+// Loads the JSON files
 async function loadJSON() {
 
     const response1 = await fetch("json/admin.json");
@@ -37,7 +37,7 @@ async function loadJSON() {
 }
 
 
-// Add JSON data to IndexedDB
+// Adds JSON data to IndexedDB
 async function adding_to_db(admin, doctor, medicine, patients) {
 
     // Step 1: Start a transaction
@@ -80,34 +80,34 @@ async function adding_to_db(admin, doctor, medicine, patients) {
 }
 
 
-// Restart the database
+// Restarts the database
 async function restart_db() {
 
-    // Close the database before deleting it
+    // Closes the database before deleting it
     if (db) {
         db.close();
         db = null;
     }
 
-    // Delete the existing database first
+    // Deletes the existing database first
     const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
 
     deleteRequest.onsuccess = function() {
         console.log('Database deleted successfully.');
 
-        // Start the database again
+        // Starts the database again
         start_db();
     };
 
 }
 
 
-// Start the database
+// Starts the database
 async function start_db() {
 
     let newDatabase = false;
 
-    // Open the CarePoint database
+    // Opens the CarePoint database
     const request = indexedDB.open(DB_NAME, 1);
 
     request.onupgradeneeded = function(event) {
