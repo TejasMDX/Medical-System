@@ -6,7 +6,7 @@ const KEY_ID = "medical-records-key";
 let encryptionKey;
 let keyPromise;
 
-// Open the encryption key database.
+// Opens the encryption key database.
 function openKeyDatabase() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open(ENCRYPTION_DB, 1);
@@ -81,7 +81,7 @@ async function getEncryptionKey() {
     return encryptionKey;
 }
 
-// Convert bytes to Base64.
+// Converts bytes to Base64.
 function bytesToBase64(bytes) {
     let binary = "";
 
@@ -101,7 +101,7 @@ function base64ToBytes(value) {
     );
 }
 
-// Encrypt medical information.
+// Encrypts medical information.
 async function encryptText(text) {
 
     const key = await getEncryptionKey();
@@ -121,14 +121,14 @@ async function encryptText(text) {
     };
 }
 
-// Decrypt stored medical information.
+// Decrypts stored medical information.
 async function decryptText(record) {
 
     if (record === null || record === undefined) {
         return "";
     }
 
-    // Support older records that were saved without encryption.
+    // Supports older records that were saved without encryption.
     if (typeof record === "string") {
         return record;
     }
